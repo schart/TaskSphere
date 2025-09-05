@@ -13,11 +13,14 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
   ) {
     super({
       clientID:
-        configService.get<string>('OAUTH_GOOGLE_ID') || '',
+        configService.get<string>('OAUTH_GOOGLE_ID') ||
+        '954798339847-4benmcek7d0sbep283jvqra3l75h81l4.apps.googleusercontent.com',
       clientSecret:
-        configService.get<string>('OAUTH_GOOGLE_SECRET')  || '',
+        configService.get<string>('OAUTH_GOOGLE_SECRET') ||
+        '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',
       callbackURL:
-        configService.get<string>('OAUTH_GOOGLE_REDIRECT_URL') || ''  ,
+        configService.get<string>('OAUTH_GOOGLE_REDIRECT_URL') ||
+        'http://localhost:3000/auth/google/callback',
       scope: ['email', 'profile'],
     });
   }
