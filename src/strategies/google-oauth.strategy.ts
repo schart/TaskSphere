@@ -12,15 +12,9 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
     private readonly _userRepository: UserRepository,
   ) {
     super({
-      clientID:
-        configService.get<string>('OAUTH_GOOGLE_ID') ||
-        '954798339847-4benmcek7d0sbep283jvqra3l75h81l4.apps.googleusercontent.com',
-      clientSecret:
-        configService.get<string>('OAUTH_GOOGLE_SECRET') ||
-        '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',
-      callbackURL:
-        configService.get<string>('OAUTH_GOOGLE_REDIRECT_URL') ||
-        'http://localhost:3000/auth/google/callback',
+      clientID: configService.get<string>('OAUTH_GOOGLE_ID')!,
+      clientSecret: configService.get<string>('OAUTH_GOOGLE_SECRET')!,
+      callbackURL: configService.get<string>('OAUTH_GOOGLE_REDIRECT_URL')!,
       scope: ['email', 'profile'],
     });
   }
