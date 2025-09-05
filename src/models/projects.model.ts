@@ -6,8 +6,8 @@ import {
   BelongsTo,
   HasMany,
 } from 'sequelize-typescript';
-import { User } from './users.model';
 import { ProjectWorker } from './project-workers.model';
+import { User } from './users.model';
 import { Task } from './tasks.model';
 
 @Table
