@@ -1,3 +1,3 @@
-export * from './user.repository/user.repository';
-export * from './user.repository/revoked-token.repository';
+export * from './user.repository';
+export * from './revoked-token.repository';
 export * from './';

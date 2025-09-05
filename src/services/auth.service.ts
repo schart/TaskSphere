@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { RevokedToken, User } from 'src/models';
-import { RevokedTokenRepository } from 'src/repository/user.repository/revoked-token.repository';
+import { RevokedTokenRepository } from 'src/repository/revoked-token.repository';
 
 @Injectable()
 export class AuthService {

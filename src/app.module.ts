@@ -19,7 +19,7 @@ import { UserRepository } from './repository';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './services/auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { RevokedTokenRepository } from './repository/user.repository/revoked-token.repository';
+import { RevokedTokenRepository } from './repository/revoked-token.repository';
 
 @Module({
   imports: [
