@@ -1,11 +1,8 @@
 import { UpdateUserDto } from 'src/structures';
-import { UserRepository } from 'src/repository';
 import { JwtAuthGuard, ShouldBeOwnerOfReqGuard } from 'src/strategies';
 import {
-  BadRequestException,
   Body,
   Controller,
-  NotFoundException,
   Param,
   Patch,
   Req,
@@ -46,7 +43,7 @@ export class UserController {
     return {
       ...updatedUser,
       ok: true,
-      message: 'Success login',
+      message: 'Success Update',
     };
   }
 
