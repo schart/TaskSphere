@@ -5,9 +5,9 @@ import {
   Controller,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuthService } from 'src/services/auth.service';
-import { GoogleOauthGuard } from 'src/strategies/google-oauth.strategy';
-import { JwtAuthGuard, NoJwtTokenAuthGuard } from 'src/strategies/jwt.strategy';
+import { AuthService } from 'src/services/service.auth';
+import { GoogleOauthGuard } from 'src/strategies/strategy.google.oauth';
+import { JwtAuthGuard, NoJwtTokenAuthGuard } from 'src/strategies/strategy.jwt';
 
 @Controller('auth/google')
 export class AuthController {

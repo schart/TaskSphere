@@ -1,6 +1,6 @@
 import { Column, Model, Table, HasMany } from 'sequelize-typescript';
-import { User } from './users.model';
-import { RolesPermissions } from './roles-permissions.model';
+import { User } from './model.users';
+import { RolesPermissions } from './model.roles.permissions';
 
 @Table
 export class Role extends Model<Role> {

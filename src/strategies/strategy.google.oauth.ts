@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Strategy } from 'passport-google-oauth20';
 import { AuthGuard, PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserRepository } from 'src/repository/user.repository';
+import { UserRepository } from 'src/repository/repository.user';
 
 @Injectable()
 export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
@@ -30,9 +30,8 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
     username = profile.name.givenName;
 
     /**
-     * Check user existence
-      - If that exists report "already registered" 
-     * Create user 
+     * Check user existence, if that exists report "already registered"
+     * Create user
      **/
 
     const user = await this._userRepository.findByEmail(email);
@@ -48,7 +47,7 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
       }
 
       return done(null, {
-        user: user,
+        user,
         isNewUser: true,
       });
     }

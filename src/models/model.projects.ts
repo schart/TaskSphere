@@ -6,9 +6,9 @@ import {
   BelongsTo,
   HasMany,
 } from 'sequelize-typescript';
-import { ProjectWorker } from './project-workers.model';
-import { User } from './users.model';
-import { Task } from './tasks.model';
+import { ProjectWorker } from './model.project.workers';
+import { User } from './model.users';
+import { Task } from './model.tasks';
 
 @Table
 export class Project extends Model<Project> {

@@ -1,4 +1,4 @@
-import { CredentialsInterface } from 'src/types/type.auth';
+import { CredentialsInterface } from 'src/structures/types/type.auth';
 
 export const credentials: CredentialsInterface = {
   clientID: process.env['GOOGLE_CLIENT_ID'],

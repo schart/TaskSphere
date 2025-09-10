@@ -1,4 +1,4 @@
-import { RevokedToken } from 'src/models/revoked-tokens.model';
+import { RevokedToken } from 'src/models/model.revoked.tokens';
 
 export interface CredentialsInterface {
   clientID: string | undefined;

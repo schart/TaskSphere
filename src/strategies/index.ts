@@ -1,2 +1,2 @@
-export * from './google-oauth.strategy';
-export * from './jwt.strategy';
+export * from './strategy.google.oauth';
+export * from './strategy.jwt';

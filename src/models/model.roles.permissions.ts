@@ -5,8 +5,8 @@ import {
   ForeignKey,
   PrimaryKey,
 } from 'sequelize-typescript';
-import { Role } from './roles.model';
-import { Permission } from './permissions.model';
+import { Role } from './model.roles';
+import { Permission } from './model.permissions';
 
 @Table({ timestamps: false })
 export class RolesPermissions extends Model<RolesPermissions> {

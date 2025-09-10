@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import type { RevokedTokenModelStatic } from 'src/types';
-import { RevokedToken } from 'src/models/revoked-tokens.model';
+import type { RevokedTokenModelStatic } from 'src/structures/types';
+import { RevokedToken } from 'src/models/model.revoked.tokens';
 
 @Injectable()
 export class RevokedTokenRepository {

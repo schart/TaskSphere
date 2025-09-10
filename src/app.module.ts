@@ -17,9 +17,12 @@ import { AuthController } from './controllers';
 import { GoogleOauthStrategy, GoogleOauthGuard } from './strategies';
 import { UserRepository } from './repository';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthService } from './services/auth.service';
-import { JwtStrategy } from './strategies/jwt.strategy';
-import { RevokedTokenRepository } from './repository/revoked-token.repository';
+import { AuthService } from './services/service.auth';
+import { JwtStrategy } from './strategies/strategy.jwt';
+import { RevokedTokenRepository } from './repository/respository.revoked.token';
+import { UserController } from './controllers/controlller.user';
+import { Repository } from './repository/repository.base';
+import { UserService } from './services/service.user';
 
 @Module({
   imports: [
@@ -64,7 +67,8 @@ import { RevokedTokenRepository } from './repository/revoked-token.repository';
     GoogleOauthGuard,
     GoogleOauthStrategy,
     RevokedTokenRepository,
+    UserService,
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, UserController],
 })
 export class AppModule {}

@@ -12,6 +12,6 @@ export interface UserUpdateAttributes
   extends Pick<UserCreationAttributes, 'username'> {}
 
 export interface UserCreationAttributes
-  extends Optional<UserAttributes, 'roleId'> {}
+  extends Optional<UserAttributes, 'roleId' | '_id'> {}
 
 export type UserModelStatic = typeof User & { new (): User };

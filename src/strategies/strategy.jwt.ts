@@ -1,7 +1,10 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
-import { AuthGuard, PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { JwtService } from '@nestjs/jwt';
 import { AuthService } from 'src/services';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { AuthGuard, PassportStrategy } from '@nestjs/passport';
+import { UserRepository } from 'src/repository';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -22,6 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 export class JwtAuthGuard extends AuthGuard('jwt') {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
+
     const token = request.headers.authorization?.split(' ')[1];
     if (!token) return false;
 
@@ -34,6 +38,31 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(private readonly authService: AuthService) {
     super();
   }
+}
+
+@Injectable()
+export class ShouldBeOwnerOfReqGuard {
+  async canActivate(context: ExecutionContext) {
+    const request = context.switchToHttp().getRequest();
+
+    const token = request.headers.authorization?.split(' ')[1];
+    const decodedToken: string = this.jwtService.decode(token);
+
+    const email = decodedToken['email'];
+    const user = await this.userRepository.findByEmail(email);
+    if (!user) {
+      return false;
+    }
+
+    const userId: number | undefined = user.dataValues._id;
+    request.ownerId = userId;
+    return true;
+  }
+
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly jwtService: JwtService,
+  ) {}
 }
 
 @Injectable()
