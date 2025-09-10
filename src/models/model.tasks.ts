@@ -6,8 +6,8 @@ import {
   BelongsTo,
   DataType,
 } from 'sequelize-typescript';
-import { User } from './users.model';
-import { Project } from './projects.model';
+import { User } from './model.users';
+import { Project } from './model.projects';
 import { DataTypes } from 'sequelize';
 
 export enum TaskStatus {

@@ -1,13 +1,13 @@
 import {
+  Model,
   Table,
   Column,
-  Model,
   DataType,
-  ForeignKey,
   BelongsTo,
+  ForeignKey,
 } from 'sequelize-typescript';
-import { Role } from './roles.model';
-import { UserCreationAttributes } from 'src/types/type.user-repository';
+import { Role } from './model.roles';
+import { UserCreationAttributes } from 'src/structures/types/type.user-repository';
 
 @Table
 export class User extends Model<UserCreationAttributes> {

@@ -1,11 +1,11 @@
-import { Project, User } from 'src/models';
+import { User } from 'src/models';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import type {
-  UserCreationAttributes,
   UserModelStatic,
   UserUpdateAttributes,
-} from 'src/types/type.user-repository';
+  UserCreationAttributes,
+} from 'src/structures/types/type.user-repository';
 import { Repository } from './repository.base';
 
 @Injectable()
@@ -26,10 +26,12 @@ export class UserRepository extends Repository<User> {
     updateInterface: UserUpdateAttributes,
     _id: number,
   ): Promise<User | any> {
-    return await this.userModel.update(
+    const [_, affectedRows] = await this.userModel.update(
       { ...updateInterface },
-      { where: { _id: _id } },
+      { where: { _id: _id }, returning: true },
     );
+
+    return affectedRows || null;
   }
 
   async findByEmail(_email: string): Promise<User | null> {

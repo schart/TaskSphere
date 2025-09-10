@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { RevokedToken, User } from 'src/models';
-import { RevokedTokenRepository } from 'src/repository/revoked-token.repository';
+import { RevokedTokenRepository } from 'src/repository/respository.revoked.token';
 
 @Injectable()
 export class AuthService {
   async generateToken(
-    user: User,
+    user: any,
   ): Promise<{ access_token: string; refresh_token: string }> {
     const payload = {
-      email: user.email,
+      email: user['user'].dataValues.email,
     };
 
     const access_token = this.jwtService.sign(payload, { expiresIn: '1h' });

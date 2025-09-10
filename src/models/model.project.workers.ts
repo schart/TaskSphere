@@ -5,8 +5,8 @@ import {
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
-import { User } from './users.model';
-import { Project } from './projects.model';
+import { User } from './model.users';
+import { Project } from './model.projects';
 
 @Table
 export class ProjectWorker extends Model<ProjectWorker> {
