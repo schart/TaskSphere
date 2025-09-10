@@ -11,9 +11,6 @@ import { UserCreationAttributes } from 'src/types/type.user-repository';
 
 @Table
 export class User extends Model<UserCreationAttributes> {
-  @Column({ primaryKey: true, autoIncrement: true })
-  _id: number;
-
   @Column({ type: DataType.STRING, allowNull: false })
   username: string;
 

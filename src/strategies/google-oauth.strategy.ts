@@ -35,7 +35,7 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
      * Create user 
      **/
 
-    const user = await this._userRepository.findByEmail(email);
+    const user = await this._userRepository.findOne(email);
     if (user) {
       return done(null, { user, isNewUser: false });
     } else {
