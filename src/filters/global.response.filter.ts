@@ -14,7 +14,8 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, any> {
       map((content: object) => ({
         success: true,
         statusCode: 200,
-        content: content[0],
+        content,
+        message: content['message'] || null,
         timestamp: new Date().toISOString(),
       })),
     );

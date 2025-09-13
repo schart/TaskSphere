@@ -1,5 +1,3 @@
-import { UpdateUserDto } from 'src/structures';
-import { JwtAuthGuard, ShouldBeOwnerOfReqGuard } from 'src/strategies';
 import {
   Body,
   Controller,
@@ -9,12 +7,14 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import type { Request } from 'express';
 import { User } from 'src/models';
-import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
-import { checkParamIsNumber } from 'src/global/global.check.number.param';
-import { compareIds } from 'src/global/global.compare.ids';
+import type { Request } from 'express';
+import { UpdateUserDto } from 'src/structures';
 import { UserService } from 'src/services/service.user';
+import { compareIds } from 'src/global/global.compare.ids';
+import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
+import { JwtAuthGuard, ShouldBeOwnerOfReqGuard } from 'src/strategies';
+import { checkParamIsNumber } from 'src/global/global.check.number.param';
 
 @Controller('user')
 export class UserController {
@@ -40,9 +40,10 @@ export class UserController {
       updateUserId,
     );
 
+    let updatedUserResult = !updatedUser ? null : updatedUser[0].dataValues;
+
     return {
-      ...updatedUser,
-      ok: true,
+      ...updatedUserResult, // Do not show the password to client.
       message: 'Success Update',
     };
   }
