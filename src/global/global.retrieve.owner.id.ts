@@ -6,5 +6,6 @@ export function retrieveOwnerId(req: Request): string {
   if (!ownerId) {
     throw new NotFoundException('Request must to be belongs to one');
   }
+  
   return String(ownerId);
 }
