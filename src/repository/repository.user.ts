@@ -5,6 +5,8 @@ import type {
   UserModelStatic,
   UserUpdateAttributes,
   UserCreationAttributes,
+  UserAttributes,
+  UserIdInterface,
 } from 'src/structures/types/type.user-repository';
 import { Repository } from './repository.base';
 
@@ -14,7 +16,7 @@ export class UserRepository extends Repository<User> {
     return await this.userModel.create(creationInterface);
   }
 
-  async findByPk(_id: number): Promise<User | null> {
+  async findByPk({ _id }: UserIdInterface): Promise<User | null> {
     return await this.userModel.findByPk(_id);
   }
 
@@ -24,11 +26,16 @@ export class UserRepository extends Repository<User> {
 
   async update(
     updateInterface: UserUpdateAttributes,
-    _id: number,
+    { _id }: UserIdInterface,
   ): Promise<User | any> {
     const [_, affectedRows] = await this.userModel.update(
-      { ...updateInterface },
-      { where: { _id: _id }, returning: true },
+      {
+        ...updateInterface,
+      },
+      {
+        where: { _id: _id },
+        returning: true,
+      },
     );
 
     return affectedRows || null;

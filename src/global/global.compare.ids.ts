@@ -1,4 +1,9 @@
-export function compareIds(id1: number, id2: number): boolean {
+import { UserIdInterface } from 'src/structures';
+
+export function compareIds(
+  { _id: id1 }: UserIdInterface,
+  { _id: id2 }: UserIdInterface,
+): boolean {
   if (id1 !== id2) {
     return false;
   }

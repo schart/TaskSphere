@@ -4,5 +4,5 @@ export abstract class Repository<T extends Models> {
   abstract find(): Promise<T[] | null>; // Retrieve all
   abstract findByPk(id: any): Promise<T | null>; // Retrieve one
   abstract create(creationInterface: any): Promise<T>; // Create One
-  abstract update(updateInterface: any, id: number): Promise<T | any>; // Update One
+  abstract update(updateInterface: any, id: any): Promise<T | any>; // Update One
 }
