@@ -23,6 +23,9 @@ import { RevokedTokenRepository } from './repository/respository.revoked.token';
 import { UserController } from './controllers/controlller.user';
 import { Repository } from './repository/repository.base';
 import { UserService } from './services/service.user';
+import { RepositoryProject } from './repository/repository.project';
+import { ControllerProject } from './controllers/controller.project';
+import { ServiceProject } from './services/service.project';
 
 @Module({
   imports: [
@@ -63,12 +66,14 @@ import { UserService } from './services/service.user';
   providers: [
     JwtStrategy,
     AuthService,
+    UserService,
+    RepositoryProject,
     UserRepository,
     GoogleOauthGuard,
     GoogleOauthStrategy,
     RevokedTokenRepository,
-    UserService,
+    ServiceProject,
   ],
-  controllers: [AuthController, UserController],
+  controllers: [AuthController, UserController, ControllerProject],
 })
 export class AppModule {}

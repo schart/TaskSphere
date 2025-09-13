@@ -5,6 +5,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard, PassportStrategy } from '@nestjs/passport';
 import { UserRepository } from 'src/repository';
 import { Observable } from 'rxjs';
+import { UserIdInterface } from 'src/structures';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -35,7 +36,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return super.canActivate(context) as boolean;
   }
 
-  constructor(private readonly authService: AuthService) {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly jwtService: JwtService,
+  ) {
     super();
   }
 }
@@ -54,7 +58,9 @@ export class ShouldBeOwnerOfReqGuard {
       return false;
     }
 
-    const userId: number | undefined = user.dataValues._id;
+    const { _id: userId }: UserIdInterface = {
+      _id: String(user.dataValues._id),
+    };
     request.ownerId = userId;
     return true;
   }

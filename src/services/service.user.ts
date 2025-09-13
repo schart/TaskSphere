@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/models';
 import { UserRepository } from 'src/repository';
-import { UserUpdateAttributes } from 'src/structures';
+import { UserIdInterface, UserUpdateAttributes } from 'src/structures';
 
 @Injectable()
 export class UserService {
   async updateService(
     body: UserUpdateAttributes,
-    updateUserId: number,
+    _id: UserIdInterface,
   ): Promise<User | null> {
-    return await this.userRepository.update(body, updateUserId);
+    return await this.userRepository.update(body, _id);
+  }
+
+  async retrieveDetailService(_id: UserIdInterface): Promise<User | null> {
+    return await this.userRepository.findByPk(_id);
   }
 
   constructor(private readonly userRepository: UserRepository) {}

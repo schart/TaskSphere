@@ -2,11 +2,13 @@ import { Optional } from 'sequelize';
 import { User } from 'src/models';
 
 export interface UserAttributes {
-  _id: number;
+  _id: string;
   username: string;
   email: string;
   roleId?: number;
 }
+
+export interface UserIdInterface extends Pick<UserAttributes, '_id'> {}
 
 export interface UserUpdateAttributes
   extends Pick<UserCreationAttributes, 'username'> {}

@@ -1,23 +1,42 @@
-import { UpdateUserDto } from 'src/structures';
-import { JwtAuthGuard, ShouldBeOwnerOfReqGuard } from 'src/strategies';
 import {
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   Req,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import type { Request } from 'express';
 import { User } from 'src/models';
-import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
-import { checkParamIsNumber } from 'src/global/global.check.number.param';
-import { compareIds } from 'src/global/global.compare.ids';
+import type { Request } from 'express';
+import { UpdateUserDto, UserAttributes, UserIdInterface } from 'src/structures';
 import { UserService } from 'src/services/service.user';
+import { compareIds } from 'src/global/global.compare.ids';
+import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
+import { JwtAuthGuard, ShouldBeOwnerOfReqGuard } from 'src/strategies';
+import { checkParamIsNumber } from 'src/global/global.check.number.param';
 
 @Controller('user')
 export class UserController {
+  @UseGuards(JwtAuthGuard)
+  @Get('/:id')
+  async retrieveDetail(@Req() _req: Request, @Param('id') param: string) {
+    const userIdRaw = checkParamIsNumber(param);
+    const userId: UserIdInterface = { _id: userIdRaw };
+
+    let retrieveUserDetails: User | null =
+      await this.userService.retrieveDetailService(userId);
+    let retrieveUserDetailsResult = !retrieveUserDetails
+      ? null
+      : retrieveUserDetails.dataValues;
+
+    return {
+      ...retrieveUserDetailsResult,
+      message: 'Successfully',
+    };
+  }
+
   @UseGuards(JwtAuthGuard, ShouldBeOwnerOfReqGuard)
   @Patch('/:id')
   async update(
@@ -25,8 +44,11 @@ export class UserController {
     @Body() body: UpdateUserDto,
     @Param('id') param: string,
   ) {
-    const ownerId: number = retrieveOwnerId(req);
-    const updateUserId: number = checkParamIsNumber(param);
+    const ownerIdRaw = retrieveOwnerId(req);
+    const ownerId: UserIdInterface = { _id: ownerIdRaw };
+
+    const updateUserIdRaw = checkParamIsNumber(param);
+    const updateUserId: UserIdInterface = { _id: updateUserIdRaw };
 
     const result = compareIds(ownerId, updateUserId);
     if (!result) {
@@ -40,10 +62,11 @@ export class UserController {
       updateUserId,
     );
 
+    let updatedUserResult = !updatedUser ? null : updatedUser[0].dataValues;
+
     return {
-      ...updatedUser,
-      ok: true,
-      message: 'Success Update',
+      ...updatedUserResult, // Do not show the password to client.
+      message: 'Successfully',
     };
   }
 

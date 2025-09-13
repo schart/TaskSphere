@@ -13,7 +13,7 @@ import { Task } from './model.tasks';
 @Table
 export class Project extends Model<Project> {
   @Column({ primaryKey: true, autoIncrement: true })
-  _id: number;
+  _id: string;
 
   @ForeignKey(() => User)
   @Column({ allowNull: false })
