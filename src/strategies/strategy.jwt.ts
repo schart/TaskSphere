@@ -3,9 +3,9 @@ import { AuthService } from 'src/services';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard, PassportStrategy } from '@nestjs/passport';
-import { UserRepository } from 'src/repository';
+import { RepositoryUser } from 'src/repository';
 import { Observable } from 'rxjs';
-import { UserIdInterface } from 'src/structures';
+import { InterfaceUserId } from 'src/structures';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -58,7 +58,7 @@ export class ShouldBeOwnerOfReqGuard {
       return false;
     }
 
-    const { _id: userId }: UserIdInterface = {
+    const { _id: userId }: InterfaceUserId = {
       _id: String(user.dataValues._id),
     };
     request.ownerId = userId;
@@ -66,7 +66,7 @@ export class ShouldBeOwnerOfReqGuard {
   }
 
   constructor(
-    private readonly userRepository: UserRepository,
+    private readonly userRepository: RepositoryUser,
     private readonly jwtService: JwtService,
   ) {}
 }

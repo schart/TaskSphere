@@ -7,7 +7,7 @@ import type {
   InterfaceProjectUpdate,
 } from 'src/structures/types/type.project';
 import { InjectModel } from '@nestjs/sequelize';
-import { UserIdInterface } from 'src/structures';
+import { InterfaceUserId } from 'src/structures';
 
 @Injectable()
 export class RepositoryProject extends Repository<Project> {
@@ -42,7 +42,7 @@ export class RepositoryProject extends Repository<Project> {
     return await this.model.findByPk(_id);
   }
 
-  async userHasProject({ _id }: UserIdInterface): Promise<Project | null> {
+  async userHasProject({ _id }: InterfaceUserId): Promise<Project | null> {
     return await this.model.findOne({
       where: {
         ownerId: _id,

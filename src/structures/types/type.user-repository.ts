@@ -1,19 +1,20 @@
 import { Optional } from 'sequelize';
 import { User } from 'src/models';
 
-export interface UserAttributes {
+export interface InterfaceUserAttributes {
   _id: string;
   username: string;
   email: string;
   roleId?: number;
 }
 
-export interface UserIdInterface extends Pick<UserAttributes, '_id'> {}
+export interface InterfaceUserId
+  extends Pick<InterfaceUserAttributes, '_id'> {}
 
-export interface UserUpdateAttributes
-  extends Pick<UserCreationAttributes, 'username'> {}
+export interface InterfaceUserUpdate
+  extends Pick<InterfaceUserCreation, 'username'> {}
 
-export interface UserCreationAttributes
-  extends Optional<UserAttributes, 'roleId' | '_id'> {}
+export interface InterfaceUserCreation
+  extends Optional<InterfaceUserAttributes, 'roleId' | '_id'> {}
 
-export type UserModelStatic = typeof User & { new (): User };
+export type TypeUserModelStatic = typeof User & { new (): User };

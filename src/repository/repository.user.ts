@@ -2,30 +2,23 @@ import { User } from 'src/models';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import type {
-  UserModelStatic,
-  UserUpdateAttributes,
-  UserCreationAttributes,
-  UserIdInterface,
+  TypeUserModelStatic,
+  InterfaceUserUpdate,
+  InterfaceUserId,
+  InterfaceUserCreation,
+  InterfaceUserAttributes,
 } from 'src/structures/types/type.user-repository';
 import { Repository } from './repository.base';
 
 @Injectable()
-export class UserRepository extends Repository<User> {
-  async create(creationInterface: UserCreationAttributes): Promise<User> {
+export class RepositoryUser extends Repository<User> {
+  async create(creationInterface: InterfaceUserCreation): Promise<User> {
     return await this.model.create(creationInterface);
   }
 
-  async findByPk({ _id }: UserIdInterface): Promise<User | null> {
-    return await this.model.findByPk(_id);
-  }
-
-  async find(): Promise<User[] | null> {
-    return await this.model.findAll();
-  }
-
   async update(
-    updateInterface: UserUpdateAttributes,
-    { _id }: UserIdInterface,
+    updateInterface: InterfaceUserUpdate,
+    { _id }: InterfaceUserId,
   ): Promise<User | any> {
     const [_, affectedRows] = await this.model.update(
       {
@@ -40,7 +33,17 @@ export class UserRepository extends Repository<User> {
     return affectedRows || null;
   }
 
-  async findByEmail(_email: string): Promise<User | null> {
+  async find(): Promise<User[] | null> {
+    return await this.model.findAll();
+  }
+
+  async findByPk({ _id }: InterfaceUserId): Promise<User | null> {
+    return await this.model.findByPk(_id);
+  }
+
+  async findByEmail(
+    _email: Pick<InterfaceUserAttributes, 'email'>,
+  ): Promise<User | null> {
     return await this.model.findOne({
       where: {
         email: _email,
@@ -48,7 +51,7 @@ export class UserRepository extends Repository<User> {
     });
   }
 
-  constructor(@InjectModel(User) private readonly model: UserModelStatic) {
+  constructor(@InjectModel(User) private readonly model: TypeUserModelStatic) {
     super();
   }
 }

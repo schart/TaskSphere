@@ -11,7 +11,7 @@ import type { Request } from 'express';
 import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
 import { ServiceProject } from 'src/services/service.project';
 import { JwtAuthGuard, ShouldBeOwnerOfReqGuard } from 'src/strategies';
-import { UserIdInterface } from 'src/structures';
+import { InterfaceUserId } from 'src/structures';
 import { DtoProjectCreate } from 'src/structures/dto/dto.project';
 
 @Controller('project')
@@ -20,7 +20,7 @@ export class ControllerProject {
   @Post('/')
   async create(@Body() body: DtoProjectCreate, @Req() req: Request) {
     const ownerIdRaw = retrieveOwnerId(req);
-    const ownerId: UserIdInterface = { _id: ownerIdRaw };
+    const ownerId: InterfaceUserId = { _id: ownerIdRaw };
 
     await this.service.userHasProject(ownerId);
 

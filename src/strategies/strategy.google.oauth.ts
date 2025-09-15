@@ -3,13 +3,14 @@ import { ConfigService } from '@nestjs/config';
 import { Strategy } from 'passport-google-oauth20';
 import { AuthGuard, PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserRepository } from 'src/repository/repository.user';
+import { RepositoryUser } from 'src/repository/repository.user';
+import { InterfaceUserAttributes } from 'src/structures';
 
 @Injectable()
 export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(
     configService: ConfigService,
-    private readonly _userRepository: UserRepository,
+    private readonly _userRepository: RepositoryUser,
   ) {
     super({
       clientID: configService.get<string>('OAUTH_GOOGLE_ID')!,
@@ -25,9 +26,8 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
     profile: any,
     done: Function,
   ) {
-    let email: string, username: string;
-    email = profile.emails[0].value;
-    username = profile.name.givenName;
+    let email: InterfaceUserAttributes = profile.emails[0].value;
+    let username: string = profile.name.givenName;
 
     /**
      * Check user existence, if that exists report "already registered"
@@ -40,7 +40,7 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
     } else {
       const user: User = await this._userRepository.create({
         username: username,
-        email: email,
+        email: email.email,
       });
       if (!user) {
         throw new UnauthorizedException('Error occurs in registration');
