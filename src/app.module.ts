@@ -9,23 +9,21 @@ import {
   Task,
   User,
 } from './models';
-import { ConfigModule } from '@nestjs/config';
-import { SequelizeModule } from '@nestjs/sequelize';
-
-import { PassportModule } from '@nestjs/passport';
-import { AuthController } from './controllers';
-import { GoogleOauthStrategy, GoogleOauthGuard } from './strategies';
-import { RepositoryUser } from './repository';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthService } from './services/service.auth';
-import { JwtStrategy } from './strategies/strategy.jwt';
-import { RevokedTokenRepository } from './repository/respository.revoked.token';
-import { UserController } from './controllers/controlller.user';
-import { Repository } from './repository/repository.base';
+import { RepositoryUser } from './repository';
+import { ConfigModule } from '@nestjs/config';
+import { ControllerAuth } from './controllers';
+import { PassportModule } from '@nestjs/passport';
+import { SequelizeModule } from '@nestjs/sequelize';
 import { UserService } from './services/service.user';
+import { ServiceAuth } from './services/service.auth';
+import { StrategyJwt } from './strategies/strategy.jwt';
+import { ServiceProject } from './services/service.project';
+import { RepositoryAuth } from './repository/respository.auth';
+import { UserController } from './controllers/controlller.user';
 import { RepositoryProject } from './repository/repository.project';
 import { ControllerProject } from './controllers/controller.project';
-import { ServiceProject } from './services/service.project';
+import { StrategyGoogleOauth, GuardGoogleOauth } from './strategies';
 
 @Module({
   imports: [
@@ -64,16 +62,16 @@ import { ServiceProject } from './services/service.project';
   ],
 
   providers: [
-    JwtStrategy,
-    AuthService,
+    StrategyJwt,
+    ServiceAuth,
     UserService,
     RepositoryProject,
     RepositoryUser,
-    GoogleOauthGuard,
-    GoogleOauthStrategy,
-    RevokedTokenRepository,
+    GuardGoogleOauth,
+    StrategyGoogleOauth,
+    RepositoryAuth,
     ServiceProject,
   ],
-  controllers: [AuthController, UserController, ControllerProject],
+  controllers: [ControllerAuth, UserController, ControllerProject],
 })
 export class AppModule {}

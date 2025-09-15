@@ -1,13 +1,13 @@
 import { User } from 'src/models';
 import { ConfigService } from '@nestjs/config';
 import { Strategy } from 'passport-google-oauth20';
-import { AuthGuard, PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { RepositoryUser } from 'src/repository/repository.user';
 import { InterfaceUserAttributes } from 'src/structures';
+import { AuthGuard, PassportStrategy } from '@nestjs/passport';
+import { RepositoryUser } from 'src/repository/repository.user';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
-export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
+export class StrategyGoogleOauth extends PassportStrategy(Strategy, 'google') {
   constructor(
     configService: ConfigService,
     private readonly _userRepository: RepositoryUser,
@@ -54,4 +54,4 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
   }
 }
 
-export class GoogleOauthGuard extends AuthGuard('google') {}
+export class GuardGoogleOauth extends AuthGuard('google') {}

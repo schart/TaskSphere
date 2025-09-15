@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { RevokedToken, User } from 'src/models';
-import { RevokedTokenRepository } from 'src/repository/respository.revoked.token';
+import { RevokedToken } from 'src/models';
+import { Injectable } from '@nestjs/common';
+import { RepositoryAuth } from 'src/repository/respository.auth';
 
 @Injectable()
-export class AuthService {
+export class ServiceAuth {
   async generateToken(
     user: any,
   ): Promise<{ access_token: string; refresh_token: string }> {
@@ -31,6 +31,6 @@ export class AuthService {
 
   constructor(
     private jwtService: JwtService,
-    private revokedTokenRepository: RevokedTokenRepository,
+    private revokedTokenRepository: RepositoryAuth,
   ) {}
 }

@@ -1,5 +1,5 @@
 import { JwtService } from '@nestjs/jwt';
-import { AuthService } from 'src/services';
+import { ServiceAuth } from 'src/services';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard, PassportStrategy } from '@nestjs/passport';
@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 import { InterfaceUserId } from 'src/structures';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class StrategyJwt extends PassportStrategy(Strategy, 'jwt') {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -23,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 }
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export class GuardJwtAuth extends AuthGuard('jwt') {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
 
@@ -37,7 +37,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   constructor(
-    private readonly authService: AuthService,
+    private readonly authService: ServiceAuth,
     private readonly jwtService: JwtService,
   ) {
     super();
@@ -45,7 +45,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 }
 
 @Injectable()
-export class ShouldBeOwnerOfReqGuard {
+export class GuardShouldBeOwnerOfReq {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
 
@@ -72,7 +72,7 @@ export class ShouldBeOwnerOfReqGuard {
 }
 
 @Injectable()
-export class NoJwtTokenAuthGuard {
+export class GuardNoJwtTokenAuth {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
     const token = request.headers.authorization?.split(' ')[1];
