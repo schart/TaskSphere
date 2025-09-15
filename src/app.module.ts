@@ -15,7 +15,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './controllers';
 import { GoogleOauthStrategy, GoogleOauthGuard } from './strategies';
-import { UserRepository } from './repository';
+import { RepositoryUser } from './repository';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './services/service.auth';
 import { JwtStrategy } from './strategies/strategy.jwt';
@@ -68,7 +68,7 @@ import { ServiceProject } from './services/service.project';
     AuthService,
     UserService,
     RepositoryProject,
-    UserRepository,
+    RepositoryUser,
     GoogleOauthGuard,
     GoogleOauthStrategy,
     RevokedTokenRepository,

@@ -7,10 +7,10 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 import { Role } from './model.roles';
-import { UserCreationAttributes } from 'src/structures/types/type.user-repository';
+import { InterfaceUserCreation } from 'src/structures/types/type.user-repository';
 
 @Table
-export class User extends Model<UserCreationAttributes> {
+export class User extends Model<InterfaceUserCreation> {
   @Column({ primaryKey: true, autoIncrement: true })
   _id: number;
 

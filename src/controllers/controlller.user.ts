@@ -12,7 +12,7 @@ import { User } from 'src/models';
 import type { Request } from 'express';
 import { UserService } from 'src/services/service.user';
 import { compareIds } from 'src/global/global.compare.ids';
-import { UpdateUserDto, UserIdInterface } from 'src/structures';
+import { UpdateUserDto, InterfaceUserId } from 'src/structures';
 import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
 import { JwtAuthGuard, ShouldBeOwnerOfReqGuard } from 'src/strategies';
 import { checkParamIsNumber } from 'src/global/global.check.number.param';
@@ -23,10 +23,10 @@ export class UserController {
   @Get('/:id')
   async retrieveDetail(@Req() _req: Request, @Param('id') param: string) {
     const userIdRaw = checkParamIsNumber(param);
-    const userId: UserIdInterface = { _id: userIdRaw };
+    const userId: InterfaceUserId = { _id: userIdRaw };
 
     let retrieveUserDetails: User | null =
-      await this.userService.retrieveDetailService(userId);
+      await this.service.retrieveDetailService(userId);
     let retrieveUserDetailsResult = !retrieveUserDetails
       ? null
       : retrieveUserDetails.dataValues;
@@ -45,10 +45,10 @@ export class UserController {
     @Param('id') param: string,
   ) {
     const ownerIdRaw = retrieveOwnerId(req);
-    const ownerId: UserIdInterface = { _id: ownerIdRaw };
+    const ownerId: InterfaceUserId = { _id: ownerIdRaw };
 
     const updateUserIdRaw = checkParamIsNumber(param);
-    const updateUserId: UserIdInterface = { _id: updateUserIdRaw };
+    const updateUserId: InterfaceUserId = { _id: updateUserIdRaw };
 
     const result = compareIds(ownerId, updateUserId);
     if (!result) {
@@ -57,7 +57,7 @@ export class UserController {
       );
     }
 
-    const updatedUser: User | null = await this.userService.updateService(
+    const updatedUser: User | null = await this.service.updateService(
       body,
       updateUserId,
     );
@@ -70,5 +70,5 @@ export class UserController {
     };
   }
 
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly service: UserService) {}
 }
