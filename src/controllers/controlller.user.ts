@@ -1,18 +1,18 @@
 import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
   Req,
-  UnauthorizedException,
+  Get,
+  Body,
+  Patch,
+  Param,
   UseGuards,
+  Controller,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { User } from 'src/models';
 import type { Request } from 'express';
-import { UpdateUserDto, UserAttributes, UserIdInterface } from 'src/structures';
 import { UserService } from 'src/services/service.user';
 import { compareIds } from 'src/global/global.compare.ids';
+import { UpdateUserDto, UserIdInterface } from 'src/structures';
 import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
 import { JwtAuthGuard, ShouldBeOwnerOfReqGuard } from 'src/strategies';
 import { checkParamIsNumber } from 'src/global/global.check.number.param';
