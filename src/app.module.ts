@@ -10,7 +10,6 @@ import {
   User,
 } from './models';
 import { JwtModule } from '@nestjs/jwt';
-import { RepositoryUser } from './repository';
 import { ConfigModule } from '@nestjs/config';
 import { ControllerAuth } from './controllers';
 import { PassportModule } from '@nestjs/passport';
@@ -19,8 +18,8 @@ import { UserService } from './services/service.user';
 import { ServiceAuth } from './services/service.auth';
 import { StrategyJwt } from './strategies/strategy.jwt';
 import { ServiceProject } from './services/service.project';
-import { RepositoryAuth } from './repository/respository.auth';
-import { UserController } from './controllers/controlller.user';
+import { RepositoryAuth, RepositoryUser } from './repository';
+import { UserController } from './controllers/controller.user';
 import { RepositoryProject } from './repository/repository.project';
 import { ControllerProject } from './controllers/controller.project';
 import { StrategyGoogleOauth, GuardGoogleOauth } from './strategies';
@@ -65,12 +64,12 @@ import { StrategyGoogleOauth, GuardGoogleOauth } from './strategies';
     StrategyJwt,
     ServiceAuth,
     UserService,
-    RepositoryProject,
-    RepositoryUser,
-    GuardGoogleOauth,
-    StrategyGoogleOauth,
     RepositoryAuth,
     ServiceProject,
+    RepositoryUser,
+    GuardGoogleOauth,
+    RepositoryProject,
+    StrategyGoogleOauth,
   ],
   controllers: [ControllerAuth, UserController, ControllerProject],
 })
