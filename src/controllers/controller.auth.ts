@@ -29,7 +29,6 @@ export class AuthController {
       await this.authService.generateToken(user);
 
     return {
-      ok: true,
       message: 'Success login',
       access_token: access_token,
     };
