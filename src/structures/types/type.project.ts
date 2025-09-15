@@ -17,4 +17,4 @@ export interface InterfaceProjectCreation
 export interface InterfaceProjectUpdate
   extends Pick<InterfaceProjectAttributes, 'title' | 'description'> {}
 
-export type ProjectModelStatic = typeof Project & { new (): Project };
+export type TypeProjectModel = typeof Project & { new (): Project };

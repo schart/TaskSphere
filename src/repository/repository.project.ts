@@ -1,8 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { Repository } from './repository.base';
 import { Project } from 'src/models';
+import { Injectable } from '@nestjs/common';
+import { Repository } from './repository.base';
 import type {
-  ProjectModelStatic,
+  TypeProjectModel,
   InterfaceProjectId,
   InterfaceProjectUpdate,
 } from 'src/structures/types/type.project';
@@ -50,9 +50,7 @@ export class RepositoryProject extends Repository<Project> {
     });
   }
 
-  constructor(
-    @InjectModel(Project) private readonly model: ProjectModelStatic,
-  ) {
+  constructor(@InjectModel(Project) private readonly model: TypeProjectModel) {
     super();
   }
 }
