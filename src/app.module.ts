@@ -21,7 +21,6 @@ import { AuthService } from './services/service.auth';
 import { JwtStrategy } from './strategies/strategy.jwt';
 import { RevokedTokenRepository } from './repository/respository.revoked.token';
 import { UserController } from './controllers/controlller.user';
-import { Repository } from './repository/repository.base';
 import { UserService } from './services/service.user';
 import { RepositoryProject } from './repository/repository.project';
 import { ControllerProject } from './controllers/controller.project';
