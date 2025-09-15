@@ -7,7 +7,7 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 import { Role } from './model.roles';
-import { InterfaceUserCreation } from 'src/structures/types/type.user-repository';
+import { InterfaceUserCreation } from 'src/structures/types/type.user';
 
 @Table
 export class User extends Model<InterfaceUserCreation> {

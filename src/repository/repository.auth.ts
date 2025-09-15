@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import type { RevokedTokenModelStatic } from 'src/structures/types';
 import { RevokedToken } from 'src/models/model.revoked.tokens';
+import type { InterfaceRevokedTokenModel } from 'src/structures/types';
 
 @Injectable()
-export class RevokedTokenRepository {
+export class RepositoryAuth {
   async create(token: any) {
-    return this.revokedTokenModel.create(token);
+    return this.model.create(token);
   }
 
   async findOne(token: string) {
-    return this.revokedTokenModel.findOne({
+    return this.model.findOne({
       where: {
         token: token,
       },
@@ -19,6 +19,6 @@ export class RevokedTokenRepository {
 
   constructor(
     @InjectModel(RevokedToken)
-    private readonly revokedTokenModel: RevokedTokenModelStatic,
+    private readonly model: InterfaceRevokedTokenModel,
   ) {}
 }

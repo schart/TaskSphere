@@ -5,18 +5,17 @@ import {
   Controller,
   UnauthorizedException,
 } from '@nestjs/common';
-
-import { AuthService } from 'src/services/service.auth';
-import { GoogleOauthGuard } from 'src/strategies/strategy.google.oauth';
-import { JwtAuthGuard, NoJwtTokenAuthGuard } from 'src/strategies/strategy.jwt';
+import { ServiceAuth } from 'src/services/service.auth';
+import { GuardGoogleOauth } from 'src/strategies/strategy.google.oauth';
+import { GuardJwtAuth, GuardNoJwtTokenAuth } from 'src/strategies/strategy.jwt';
 
 @Controller('auth/google')
-export class AuthController {
-  @UseGuards(NoJwtTokenAuthGuard, GoogleOauthGuard)
+export class ControllerAuth {
+  @UseGuards(GuardNoJwtTokenAuth, GuardGoogleOauth)
   @Get()
   async googleAuth(@Req() _req: Request) {}
 
-  @UseGuards(GoogleOauthGuard)
+  @UseGuards(GuardGoogleOauth)
   @Get('/callback')
   async googleAuthRedirect(@Req() req: Request) {
     const user = req['user'];
@@ -26,7 +25,7 @@ export class AuthController {
     }
 
     const { access_token, refresh_token } =
-      await this.authService.generateToken(user);
+      await this.service.generateToken(user);
 
     return {
       message: 'Success login',
@@ -34,13 +33,13 @@ export class AuthController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GuardJwtAuth)
   @Get('/logout')
   async logout(@Req() req: Request) {
     const token = req.headers['authorization'].split(' ')[1];
 
     // Revoke token
-    await this.authService.revokeToken(token);
+    await this.service.revokeToken(token);
 
     return {
       ok: true,
@@ -48,5 +47,5 @@ export class AuthController {
     };
   }
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly service: ServiceAuth) {}
 }

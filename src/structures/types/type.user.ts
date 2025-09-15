@@ -8,8 +8,7 @@ export interface InterfaceUserAttributes {
   roleId?: number;
 }
 
-export interface InterfaceUserId
-  extends Pick<InterfaceUserAttributes, '_id'> {}
+export interface InterfaceUserId extends Pick<InterfaceUserAttributes, '_id'> {}
 
 export interface InterfaceUserUpdate
   extends Pick<InterfaceUserCreation, 'username'> {}
