@@ -19,7 +19,7 @@ import { ServiceAuth } from './services/service.auth';
 import { StrategyJwt } from './strategies/strategy.jwt';
 import { ServiceProject } from './services/service.project';
 import { RepositoryAuth, RepositoryUser } from './repository';
-import { UserController } from './controllers/controller.user';
+import { ControllerUser } from './controllers/controller.user';
 import { RepositoryProject } from './repository/repository.project';
 import { ControllerProject } from './controllers/controller.project';
 import { StrategyGoogleOauth } from './strategies';
@@ -72,6 +72,6 @@ import { GuardGoogleOauth } from './guards/guard.google';
     RepositoryProject,
     StrategyGoogleOauth,
   ],
-  controllers: [ControllerAuth, UserController, ControllerProject],
+  controllers: [ControllerAuth, ControllerUser, ControllerProject],
 })
 export class AppModule {}
