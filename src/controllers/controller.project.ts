@@ -1,8 +1,8 @@
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
 import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
+import { GuardJwtAuth, GuardShouldBeOwnerOfReq } from 'src/guards/guard.jwt';
 import { ServiceProject } from 'src/services/service.project';
-import { GuardJwtAuth, GuardShouldBeOwnerOfReq } from 'src/strategies';
 import { InterfaceUserId } from 'src/structures';
 import { DtoProjectCreate } from 'src/structures/dto/dto.project';
 

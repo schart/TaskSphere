@@ -22,7 +22,8 @@ import { RepositoryAuth, RepositoryUser } from './repository';
 import { UserController } from './controllers/controller.user';
 import { RepositoryProject } from './repository/repository.project';
 import { ControllerProject } from './controllers/controller.project';
-import { StrategyGoogleOauth, GuardGoogleOauth } from './strategies';
+import { StrategyGoogleOauth } from './strategies';
+import { GuardGoogleOauth } from './guards/guard.google';
 
 @Module({
   imports: [

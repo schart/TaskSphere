@@ -12,25 +12,29 @@ export class ServiceAuth {
       email: user['user'].dataValues.email,
     };
 
-    const access_token = this.jwtService.sign(payload, { expiresIn: '1h' });
-    const refresh_token = this.jwtService.sign(payload, { expiresIn: '7d' });
+    const access_token: string = this.service.sign(payload, {
+      expiresIn: '1h',
+    });
+    const refresh_token: string = this.service.sign(payload, {
+      expiresIn: '7d',
+    });
 
     return { access_token, refresh_token };
   }
 
   async revokeToken(token: string): Promise<void> {
-    const revokedToken = this.revokedTokenRepository.create({ token: token });
+    const revokedToken = this.repository.create({ token: token });
     if (!revokedToken) {
       throw new Error('Error when creating revoked token');
     }
   }
 
   async checkRevokedToken(token: string): Promise<RevokedToken | null> {
-    return await this.revokedTokenRepository.findOne(token);
+    return await this.repository.findOne(token);
   }
 
   constructor(
-    private jwtService: JwtService,
-    private revokedTokenRepository: RepositoryAuth,
+    private service: JwtService,
+    private repository: RepositoryAuth,
   ) {}
 }
