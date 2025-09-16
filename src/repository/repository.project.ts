@@ -8,6 +8,8 @@ import type {
 } from 'src/structures/types/type.project';
 import { InjectModel } from '@nestjs/sequelize';
 import { InterfaceUserId } from 'src/structures';
+import { Sequelize } from 'sequelize-typescript';
+import sequelize from 'sequelize';
 
 @Injectable()
 export class RepositoryProject extends Repository<Project> {
@@ -42,7 +44,7 @@ export class RepositoryProject extends Repository<Project> {
     return await this.model.findByPk(_id);
   }
 
-  async userHasProject({ _id }: InterfaceUserId): Promise<Project | null> {
+  async findByUserId({ _id }: InterfaceUserId): Promise<Project | null> {
     return await this.model.findOne({
       where: {
         ownerId: _id,
@@ -50,7 +52,25 @@ export class RepositoryProject extends Repository<Project> {
     });
   }
 
-  constructor(@InjectModel(Project) private readonly model: TypeProjectModel) {
+  async deleteWithOwnTasks(
+    { _id }: InterfaceProjectId,
+    tx: sequelize.Transaction,
+  ) {
+    await this.model.destroy({
+      where: {
+        _id: _id,
+      },
+    });
+
+    // delete tasks in here
+
+    tx.commit();
+  }
+
+  constructor(
+    @InjectModel(Project) private readonly model: TypeProjectModel,
+    private readonly sequelize: Sequelize,
+  ) {
     super();
   }
 }

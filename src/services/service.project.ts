@@ -1,8 +1,10 @@
 import { ConflictException, Injectable } from '@nestjs/common';
+import { Sequelize } from 'sequelize-typescript';
 import { Project } from 'src/models';
 import { RepositoryProject } from 'src/repository/repository.project';
 import { InterfaceUserId } from 'src/structures';
 import { DtoProjectCreate } from 'src/structures/dto/dto.project';
+import { InterfaceProjectId } from 'src/structures/types/type.project';
 
 @Injectable()
 export class ServiceProject {
@@ -13,16 +15,27 @@ export class ServiceProject {
     return await this.repository.create({ ...body, ownerId: _id });
   }
 
-  async userHasProject(id: InterfaceUserId) {
-    const userProject: Project | null =
-      await this.repository.userHasProject(id);
+  async findByUserId(id: InterfaceUserId): Promise<Project | null> {
+    const userProject: Project | null = await this.repository.findByUserId(id);
 
-    if (userProject) {
-      throw new ConflictException('The user already has an existing project.');
+    if (!userProject) {
+      return null;
     }
 
-    return;
+    return userProject;
   }
 
-  constructor(private readonly repository: RepositoryProject) {}
+  async deleteWithOwnTasks(id: InterfaceProjectId) {
+    const tx = await this.sequelize.transaction();
+    try {
+      await this.repository.deleteWithOwnTasks(id, tx);
+    } catch {
+      tx.rollback();
+    }
+  }
+
+  constructor(
+    private readonly repository: RepositoryProject,
+    private readonly sequelize: Sequelize,
+  ) {}
 }
