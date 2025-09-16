@@ -14,12 +14,12 @@ import { UserService } from 'src/services/service.user';
 import { compareIds } from 'src/global/global.compare.ids';
 import { UpdateUserDto, InterfaceUserId } from 'src/structures';
 import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
-import { JwtAuthGuard, ShouldBeOwnerOfReqGuard } from 'src/strategies';
 import { checkParamIsNumber } from 'src/global/global.check.number.param';
+import { GuardJwtAuth, GuardShouldBeOwnerOfReq } from 'src/guards/guard.jwt';
 
 @Controller('user')
 export class UserController {
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GuardJwtAuth)
   @Get('/:id')
   async retrieveDetail(@Req() _req: Request, @Param('id') param: string) {
     const userIdRaw = checkParamIsNumber(param);
@@ -37,7 +37,7 @@ export class UserController {
     };
   }
 
-  @UseGuards(JwtAuthGuard, ShouldBeOwnerOfReqGuard)
+  @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
   @Patch('/:id')
   async update(
     @Req() req: Request,

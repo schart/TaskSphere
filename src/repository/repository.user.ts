@@ -7,7 +7,7 @@ import type {
   InterfaceUserId,
   InterfaceUserCreation,
   InterfaceUserAttributes,
-} from 'src/structures/types/type.user-repository';
+} from 'src/structures/types/type.user';
 import { Repository } from './repository.base';
 
 @Injectable()
