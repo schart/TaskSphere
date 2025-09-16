@@ -39,7 +39,6 @@ export class ControllerProject {
 
     return {
       ...projectResult,
-      message: 'Successfully',
     };
   }
 
@@ -60,7 +59,7 @@ export class ControllerProject {
     await this.service.deleteWithOwnTasks(projectId);
 
     return {
-      message: 'Project deleted with id: ' + projectId,
+      message: 'Project deleted with id: ' + projectId._id,
     };
   }
 

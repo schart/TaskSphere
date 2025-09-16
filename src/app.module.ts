@@ -23,7 +23,7 @@ import { ControllerUser } from './controllers/controller.user';
 import { RepositoryProject } from './repository/repository.project';
 import { ControllerProject } from './controllers/controller.project';
 import { GuardGoogleOauth, StrategyGoogleOauth } from './strategies';
- 
+
 @Module({
   imports: [
     SequelizeModule.forRoot({

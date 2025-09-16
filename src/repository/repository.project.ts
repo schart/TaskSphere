@@ -60,6 +60,7 @@ export class RepositoryProject extends Repository<Project> {
       where: {
         _id: _id,
       },
+      transaction: tx,
     });
 
     // delete tasks in here
