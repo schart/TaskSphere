@@ -15,7 +15,7 @@ import { compareIds } from 'src/global/global.compare.ids';
 import { UpdateUserDto, InterfaceUserId } from 'src/structures';
 import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
 import { checkParamIsNumber } from 'src/global/global.check.number.param';
-import { GuardJwtAuth, GuardShouldBeOwnerOfReq } from 'src/strategies';
+import { GuardJwtAuth, GuardShouldBeOwnerOfReq } from 'src/guards/guard.jwt';
 
 @Controller('user')
 export class UserController {
