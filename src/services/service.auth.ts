@@ -12,6 +12,8 @@ export class ServiceAuth {
       email: user['user'].dataValues.email,
     };
 
+    console.log('payload: ', payload);
+
     const access_token: string = this.service.sign(payload, {
       expiresIn: '1h',
     });

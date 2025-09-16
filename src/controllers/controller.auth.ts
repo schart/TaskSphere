@@ -5,14 +5,18 @@ import {
   Controller,
   UnauthorizedException,
 } from '@nestjs/common';
+import { GuardGoogleOauth } from 'src/strategies';
+import {
+  GuardJwtAuth,
+  GuardNoJwtTokenAuth,
+  GuardShouldBeOwnerOfReq,
+} from 'src/guards/guard.jwt';
 import { ServiceAuth } from 'src/services/service.auth';
-import { GuardGoogleOauth } from 'src/guards/guard.google';
 import { extractToken } from 'src/global/global.extract.token';
-import { GuardNoJwtTokenAuth, GuardJwtAuth } from 'src/guards/guard.jwt';
 
 @Controller('auth/google')
 export class ControllerAuth {
-  @UseGuards(GuardNoJwtTokenAuth, GuardGoogleOauth)
+  @UseGuards(GuardGoogleOauth) // No Req token
   @Get()
   async googleAuth(@Req() _req: Request) {}
 
@@ -38,8 +42,6 @@ export class ControllerAuth {
   @Get('/logout')
   async logout(@Req() req: Request) {
     const token: string = extractToken(req.headers['authorization']);
-
-    // Revoke token
     await this.service.revokeToken(token);
 
     return {
