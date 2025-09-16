@@ -6,11 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { GuardGoogleOauth } from 'src/strategies';
-import {
-  GuardJwtAuth,
-  GuardNoJwtTokenAuth,
-  GuardShouldBeOwnerOfReq,
-} from 'src/guards/guard.jwt';
+import { GuardJwtAuth } from 'src/guards/guard.jwt';
 import { ServiceAuth } from 'src/services/service.auth';
 import { extractToken } from 'src/global/global.extract.token';
 
@@ -33,7 +29,6 @@ export class ControllerAuth {
       await this.service.generateToken(user);
 
     return {
-      message: 'Success login',
       access_token: access_token,
     };
   }
@@ -44,9 +39,7 @@ export class ControllerAuth {
     const token: string = extractToken(req.headers['authorization']);
     await this.service.revokeToken(token);
 
-    return {
-      message: 'Logout success',
-    };
+    return {};
   }
 
   constructor(private readonly service: ServiceAuth) {}

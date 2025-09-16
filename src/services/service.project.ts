@@ -1,9 +1,9 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { Sequelize } from 'sequelize-typescript';
 import { Project } from 'src/models';
-import { RepositoryProject } from 'src/repository/repository.project';
+import { Injectable } from '@nestjs/common';
+import { Sequelize } from 'sequelize-typescript';
 import { InterfaceUserId } from 'src/structures';
 import { DtoProjectCreate } from 'src/structures/dto/dto.project';
+import { RepositoryProject } from 'src/repository/repository.project';
 import { InterfaceProjectId } from 'src/structures/types/type.project';
 
 @Injectable()

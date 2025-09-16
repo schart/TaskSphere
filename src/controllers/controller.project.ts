@@ -58,9 +58,7 @@ export class ControllerProject {
 
     await this.service.deleteWithOwnTasks(projectId);
 
-    return {
-      message: 'Project deleted with id: ' + projectId._id,
-    };
+    return {};
   }
 
   constructor(private readonly service: ServiceProject) {}

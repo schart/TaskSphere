@@ -33,7 +33,6 @@ export class ControllerUser {
 
     return {
       ...retrieveUserDetailsResult,
-      message: 'Successfully',
     };
   }
 
@@ -65,8 +64,7 @@ export class ControllerUser {
     let updatedUserResult = !updatedUser ? null : updatedUser[0].dataValues;
 
     return {
-      ...updatedUserResult, // Do not show the password to client.
-      message: 'Successfully',
+      ...updatedUserResult,
     };
   }
 
