@@ -12,7 +12,7 @@ export class GuardJwtAuth extends AuthGuard('jwt') {
     console.log('[GuardJwtAuth]');
 
     const request = context.switchToHttp().getRequest();
-    const token = request.headers.authorization?.split(' ')[1];
+    const token = extractToken(request.headers['authorization']);
     if (!token) return false;
 
     const isRevoked = await this.authService.checkRevokedToken(token);
