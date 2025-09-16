@@ -18,7 +18,7 @@ import { checkParamIsNumber } from 'src/global/global.check.number.param';
 import { GuardJwtAuth, GuardShouldBeOwnerOfReq } from 'src/guards/guard.jwt';
 
 @Controller('user')
-export class UserController {
+export class ControllerUser {
   @UseGuards(GuardJwtAuth)
   @Get('/:id')
   async retrieveDetail(@Req() _req: Request, @Param('id') param: string) {
