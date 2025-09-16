@@ -7,6 +7,7 @@ import type {
   InterfaceUserId,
   InterfaceUserCreation,
   InterfaceUserAttributes,
+  InterfaceUserEmail,
 } from 'src/structures/types/type.user';
 import { Repository } from './repository.base';
 
@@ -41,12 +42,10 @@ export class RepositoryUser extends Repository<User> {
     return await this.model.findByPk(_id);
   }
 
-  async findByEmail(
-    _email: Pick<InterfaceUserAttributes, 'email'>,
-  ): Promise<User | null> {
+  async findByEmail({ email }: InterfaceUserEmail): Promise<User | null> {
     return await this.model.findOne({
       where: {
-        email: _email,
+        email: email,
       },
     });
   }

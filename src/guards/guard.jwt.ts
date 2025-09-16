@@ -2,14 +2,16 @@ import { JwtService } from '@nestjs/jwt';
 import { ServiceAuth } from 'src/services';
 import { AuthGuard } from '@nestjs/passport';
 import { RepositoryUser } from 'src/repository';
-import { InterfaceUserId } from 'src/structures';
+import { InterfaceUserEmail, InterfaceUserId } from 'src/structures';
 import { Injectable, ExecutionContext } from '@nestjs/common';
+import { extractToken } from 'src/global/global.extract.token';
 
 @Injectable()
 export class GuardJwtAuth extends AuthGuard('jwt') {
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
+    console.log('[GuardJwtAuth]');
 
+    const request = context.switchToHttp().getRequest();
     const token = request.headers.authorization?.split(' ')[1];
     if (!token) return false;
 
@@ -19,10 +21,7 @@ export class GuardJwtAuth extends AuthGuard('jwt') {
     return super.canActivate(context) as boolean;
   }
 
-  constructor(
-    private readonly authService: ServiceAuth,
-    private readonly jwtService: JwtService,
-  ) {
+  constructor(private readonly authService: ServiceAuth) {
     super();
   }
 }
@@ -31,7 +30,7 @@ export class GuardJwtAuth extends AuthGuard('jwt') {
 export class GuardNoJwtTokenAuth {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    const token = request.headers.authorization?.split(' ')[1];
+    const token = extractToken(request.headers['authorization']);
 
     return !token;
   }
@@ -42,10 +41,10 @@ export class GuardShouldBeOwnerOfReq {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
 
-    const token = request.headers.authorization?.split(' ')[1];
+    const token = extractToken(request.headers['authorization']);
     const decodedToken: string = this.jwtService.decode(token);
 
-    const email = decodedToken['email'];
+    const email: InterfaceUserEmail = { email: decodedToken['email'] };
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
       return false;
@@ -54,6 +53,7 @@ export class GuardShouldBeOwnerOfReq {
     const { _id: userId }: InterfaceUserId = {
       _id: String(user.dataValues._id),
     };
+
     request.ownerId = userId;
     return true;
   }

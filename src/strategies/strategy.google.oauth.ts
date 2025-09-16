@@ -1,8 +1,8 @@
 import { User } from 'src/models';
 import { ConfigService } from '@nestjs/config';
 import { Strategy } from 'passport-google-oauth20';
-import { InterfaceUserAttributes } from 'src/structures';
-import { PassportStrategy } from '@nestjs/passport';
+import { InterfaceUserAttributes, InterfaceUserEmail } from 'src/structures';
+import { AuthGuard, PassportStrategy } from '@nestjs/passport';
 import { RepositoryUser } from 'src/repository/repository.user';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
@@ -14,10 +14,11 @@ export class StrategyGoogleOauth extends PassportStrategy(Strategy, 'google') {
     profile: any,
     done: Function,
   ) {
-    let email: InterfaceUserAttributes = profile.emails[0].value;
+    let email: InterfaceUserEmail = { email: profile.emails[0].value };
     let username: string = profile.name.givenName;
 
     const user = await this.repository.findByEmail(email);
+
     if (user) {
       return done(null, { user, isNewUser: false });
     } else {
@@ -25,6 +26,7 @@ export class StrategyGoogleOauth extends PassportStrategy(Strategy, 'google') {
         username: username,
         email: email.email,
       });
+
       if (!user) {
         throw new UnauthorizedException('Error occurs in registration');
       }
@@ -48,3 +50,4 @@ export class StrategyGoogleOauth extends PassportStrategy(Strategy, 'google') {
     });
   }
 }
+export class GuardGoogleOauth extends AuthGuard('google') {}
