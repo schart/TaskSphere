@@ -22,9 +22,8 @@ import { RepositoryAuth, RepositoryUser } from './repository';
 import { ControllerUser } from './controllers/controller.user';
 import { RepositoryProject } from './repository/repository.project';
 import { ControllerProject } from './controllers/controller.project';
-import { StrategyGoogleOauth } from './strategies';
-import { GuardGoogleOauth } from './guards/guard.google';
-
+import { GuardGoogleOauth, StrategyGoogleOauth } from './strategies';
+ 
 @Module({
   imports: [
     SequelizeModule.forRoot({

@@ -9,6 +9,8 @@ export interface InterfaceUserAttributes {
 }
 
 export interface InterfaceUserId extends Pick<InterfaceUserAttributes, '_id'> {}
+export interface InterfaceUserEmail
+  extends Pick<InterfaceUserAttributes, 'email'> {}
 
 export interface InterfaceUserUpdate
   extends Pick<InterfaceUserCreation, 'username'> {}
