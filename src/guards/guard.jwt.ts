@@ -9,8 +9,6 @@ import { extractToken } from 'src/global/global.extract.token';
 @Injectable()
 export class GuardJwtAuth extends AuthGuard('jwt') {
   async canActivate(context: ExecutionContext) {
-    console.log('[GuardJwtAuth]');
-
     const request = context.switchToHttp().getRequest();
     const token = extractToken(request.headers['authorization']);
     if (!token) return false;
