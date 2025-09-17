@@ -5,6 +5,7 @@ import {
   Delete,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Req,
   UseGuards,
@@ -16,7 +17,10 @@ import { GuardJwtAuth, GuardShouldBeOwnerOfReq } from 'src/guards/guard.jwt';
 import { Project } from 'src/models';
 import { ServiceProject } from 'src/services/service.project';
 import { InterfaceUserId } from 'src/structures';
-import { DtoProjectCreate } from 'src/structures/dto/dto.project';
+import {
+  DtoProjectCreate,
+  DtoProjectUpdate,
+} from 'src/structures/dto/dto.project';
 import { InterfaceProjectId } from 'src/structures/types/type.project';
 
 @Controller('project')
@@ -40,6 +44,31 @@ export class ControllerProject {
     return {
       ...projectResult,
     };
+  }
+
+  @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
+  @Patch('/:id')
+  async update(
+    @Param('id') param: any,
+    @Req() req: Request,
+    @Body() body: DtoProjectUpdate,
+  ) {
+    const projectIdRaw = checkParamIsNumber(param);
+    const projectId: InterfaceProjectId = { _id: projectIdRaw };
+
+    const ownerIdRaw = retrieveOwnerId(req);
+    const ownerId: InterfaceUserId = { _id: ownerIdRaw };
+
+    const project: Project | null = await this.service.findByUserId(ownerId);
+    if (!project) {
+      throw new NotFoundException('Project Not found');
+    }
+
+    const updatedProject: Project | null = await this.service.update(
+      body,
+      projectId,
+    );
+    return { ...updatedProject };
   }
 
   @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)

@@ -1,2 +1,2 @@
-export * from './constant.credentials';
+export * from './constant.credentials.google';
 export * from './';
