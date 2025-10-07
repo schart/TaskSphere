@@ -8,7 +8,6 @@ import {
 } from 'sequelize-typescript';
 import { User } from './model.users';
 import { Project } from './model.projects';
-import { DataTypes } from 'sequelize';
 
 export enum TaskStatus {
   TODO = 'todo',
@@ -17,10 +16,10 @@ export enum TaskStatus {
   REVIEW = 'review',
 }
 
-@Table
+@Table({ tableName: 'tasks' })
 export class Task extends Model<Task> {
-  @Column({ primaryKey: true, autoIncrement: true })
-  _id: number;
+  // @Column({ type: DataType.STRING, primaryKey: true, autoIncrement: true })
+  // _id: string;
 
   @Column({ allowNull: false })
   title: string;

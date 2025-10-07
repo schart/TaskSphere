@@ -5,15 +5,16 @@ import {
   ForeignKey,
   BelongsTo,
   HasMany,
+  DataType,
 } from 'sequelize-typescript';
 import { ProjectWorker } from './model.project.workers';
 import { User } from './model.users';
 import { Task } from './model.tasks';
 
-@Table
+@Table({ tableName: 'projects' })
 export class Project extends Model<Project> {
-  @Column({ primaryKey: true, autoIncrement: true })
-  _id: string;
+  // @Column({ type: DataType.STRING, primaryKey: true, autoIncrement: true })
+  // _id: string;
 
   @ForeignKey(() => User)
   @Column({ allowNull: false })

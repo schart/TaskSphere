@@ -27,7 +27,7 @@ export class RepositoryProject extends Repository<Project> {
       },
       {
         where: {
-          _id: _id,
+          id: _id,
         },
         returning: true,
       },
@@ -58,7 +58,7 @@ export class RepositoryProject extends Repository<Project> {
   ) {
     await this.model.destroy({
       where: {
-        _id: _id,
+        id: _id,
       },
       transaction: tx,
     });

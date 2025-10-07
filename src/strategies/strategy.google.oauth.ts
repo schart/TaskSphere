@@ -16,6 +16,7 @@ export class StrategyGoogleOauth extends PassportStrategy(Strategy, 'google') {
   ) {
     let email: InterfaceUserEmail = { email: profile.emails[0].value };
     let username: string = profile.name.givenName;
+    console.log('sss', email);
 
     const user = await this.repository.findByEmail(email);
 
@@ -39,13 +40,14 @@ export class StrategyGoogleOauth extends PassportStrategy(Strategy, 'google') {
   }
 
   constructor(
-    config: ConfigService,
+    // config: ConfigService,
     private readonly repository: RepositoryUser,
   ) {
     super({
-      clientID: config.get<string>('OAUTH_GOOGLE_ID')!,
-      clientSecret: config.get<string>('OAUTH_GOOGLE_SECRET')!,
-      callbackURL: config.get<string>('OAUTH_GOOGLE_REDIRECT_URL'),
+      clientID:
+        '954798339847-4benmcek7d0sbep283jvqra3l75h81l4.apps.googleusercontent.com',
+      clientSecret: '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',
+      callbackURL: 'http://localhost:3000/auth/google/callback',
       scope: ['email', 'profile'],
     });
   }
