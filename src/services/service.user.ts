@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from 'src/models';
 import { RepositoryUser } from 'src/repository';
-import { InterfaceUserId, InterfaceUserUpdate } from 'src/structures';
+import {
+  InterfaceUserEmail,
+  InterfaceUserId,
+  InterfaceUserUpdate,
+} from 'src/structures';
 
 @Injectable()
 export class UserService {
@@ -14,6 +18,14 @@ export class UserService {
 
   async retrieveDetailService(_id: InterfaceUserId): Promise<User | null> {
     return await this.repository.findByPk(_id);
+  }
+
+  async loggedInService(email: InterfaceUserEmail): Promise<Boolean | any> {
+    const user: User | null = await this.repository.findByEmail(email);
+    if (!user) throw new NotFoundException('User not found');
+    console.log(user.dataValues.loggedIn);
+    if (user.dataValues.loggedIn == true) return true;
+    return false;
   }
 
   constructor(private readonly repository: RepositoryUser) {}

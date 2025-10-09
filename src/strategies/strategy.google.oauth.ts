@@ -1,7 +1,6 @@
 import { User } from 'src/models';
-import { ConfigService } from '@nestjs/config';
 import { Strategy } from 'passport-google-oauth20';
-import { InterfaceUserAttributes, InterfaceUserEmail } from 'src/structures';
+import { InterfaceUserEmail } from 'src/structures';
 import { AuthGuard, PassportStrategy } from '@nestjs/passport';
 import { RepositoryUser } from 'src/repository/repository.user';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
@@ -16,10 +15,8 @@ export class StrategyGoogleOauth extends PassportStrategy(Strategy, 'google') {
   ) {
     let email: InterfaceUserEmail = { email: profile.emails[0].value };
     let username: string = profile.name.givenName;
-    console.log('sss', email);
 
     const user = await this.repository.findByEmail(email);
-
     if (user) {
       return done(null, { user, isNewUser: false });
     } else {

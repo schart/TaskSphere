@@ -6,11 +6,11 @@ import type { InterfaceRevokedTokenModel } from 'src/structures/types';
 @Injectable()
 export class RepositoryAuth {
   async create(token: any): Promise<RevokedToken | undefined> {
-    return this.model.create(token);
+    return await this.model.create(token);
   }
 
   async findOne(token: string): Promise<RevokedToken | null> {
-    return this.model.findOne({
+    return await this.model.findOne({
       where: {
         token: token,
       },

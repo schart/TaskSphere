@@ -20,6 +20,9 @@ export class User extends Model<InterfaceUserCreation> {
   @Column({ type: DataType.STRING, allowNull: false, unique: true })
   email: string;
 
+  // @Column({ type: DataType.BOOLEAN })
+  // loggedIn: boolean;
+
   @ForeignKey(() => Role)
   @Column({ type: DataType.INTEGER, allowNull: true })
   roleId: number | null;

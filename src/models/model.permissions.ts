@@ -1,4 +1,4 @@
-import { Column, Model, Table, HasMany, DataType } from 'sequelize-typescript';
+import { Column, Model, Table, HasMany } from 'sequelize-typescript';
 import { RolesPermissions } from './model.roles.permissions';
 
 @Table({ tableName: 'permissions' })
