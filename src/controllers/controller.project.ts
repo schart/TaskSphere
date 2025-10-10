@@ -67,13 +67,8 @@ export class ControllerProject {
     const ownerIdRaw = retrieveOwnerId(req);
     const ownerId: InterfaceUserId = { _id: ownerIdRaw };
 
-    const project: Project | null = await this.service.findByUserId(ownerId);
-    if (!project) {
-      throw new NotFoundException('Project Not found');
-    }
-
-    await this.service.deleteWithOwnTasks(projectId);
-    return {};
+    await this.service.delete(ownerId, projectId);
+    return { message: 'Successfully!' };
   }
 
   constructor(private readonly service: ServiceProject) {}

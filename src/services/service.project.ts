@@ -53,10 +53,21 @@ export class ServiceProject {
     return userProject;
   }
 
-  async deleteWithOwnTasks(id: InterfaceProjectId) {
+  async delete(userId: InterfaceUserId, id: InterfaceProjectId) {
     const tx = await this.sequelize.transaction();
     try {
-      await this.repository.deleteWithOwnTasks(id, tx);
+      const existing: Project | null = await this.findByUserId(userId);
+      if (!existing) {
+        throw new NotFoundException('Project Not Found.');
+      }
+
+      if (Number(existing.dataValues.ownerId) != Number(userId._id)) {
+        throw new UnauthorizedException(
+          'You have to be its owner to update a project',
+        );
+      }
+
+      await this.repository.delete(id, tx);
     } catch {
       tx.rollback();
     }

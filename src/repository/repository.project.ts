@@ -52,10 +52,7 @@ export class RepositoryProject extends Repository<Project> {
     });
   }
 
-  async deleteWithOwnTasks(
-    { _id }: InterfaceProjectId,
-    tx: sequelize.Transaction,
-  ) {
+  async delete({ _id }: InterfaceProjectId, tx: sequelize.Transaction) {
     await this.model.destroy({
       where: {
         id: _id,
