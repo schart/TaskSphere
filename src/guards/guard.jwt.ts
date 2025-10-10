@@ -12,16 +12,21 @@ export class GuardJwtAuth extends AuthGuard('jwt') {
     const request: Request = context.switchToHttp().getRequest();
 
     const token = request.cookies['access_token'];
-
     if (!token) return false;
 
     const isRevoked = await this.authService.checkRevokedToken(token);
     if (isRevoked) return false;
 
+    const user = this.jwtService.decode(token);
+    request.user = user;
+
     return true;
   }
 
-  constructor(private readonly authService: ServiceAuth) {
+  constructor(
+    private readonly authService: ServiceAuth,
+    private readonly jwtService: JwtService,
+  ) {
     super();
   }
 }

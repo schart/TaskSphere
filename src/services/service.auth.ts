@@ -2,17 +2,21 @@ import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 import { RepositoryUser } from 'src/repository';
 import { RevokedToken, User } from 'src/models';
-import { InterfaceUserEmail } from 'src/structures';
+import { InterfaceJwtPayload, InterfaceUserEmail } from 'src/structures';
 import { RepositoryAuth } from 'src/repository/repository.auth';
 
 @Injectable()
 export class ServiceAuth {
-  async generateToken({ email: email }: InterfaceUserEmail): Promise<{
+  async generateToken({
+    email: email,
+    username: username,
+  }: InterfaceJwtPayload): Promise<{
     access_token: string;
     refresh_token: string;
   }> {
     const payload = {
       email: email,
+      username: username,
     };
 
     const access_token: string = this.service.sign(payload, {

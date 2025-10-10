@@ -4,6 +4,7 @@ import { InterfaceUserEmail } from 'src/structures';
 import { AuthGuard, PassportStrategy } from '@nestjs/passport';
 import { RepositoryUser } from 'src/repository/repository.user';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class StrategyGoogleOauth extends PassportStrategy(Strategy, 'google') {
@@ -28,14 +29,13 @@ export class StrategyGoogleOauth extends PassportStrategy(Strategy, 'google') {
   }
 
   constructor(
-    // config: ConfigService,
+    config: ConfigService,
     private readonly repository: RepositoryUser,
   ) {
     super({
-      clientID:
-        '954798339847-4benmcek7d0sbep283jvqra3l75h81l4.apps.googleusercontent.com',
-      clientSecret: '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',
-      callbackURL: 'http://localhost:3000/auth/google/callback',
+      clientID: config.get<string>('OAUTH_GOOGLE_ID')!,
+      clientSecret: config.get<string>('OAUTH_GOOGLE_SECRET')!,
+      callbackURL: config.get<string>('OAUTH_GOOGLE_REDIRECT_URL'),
       scope: ['email', 'profile'],
     });
   }

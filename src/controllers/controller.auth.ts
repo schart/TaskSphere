@@ -11,6 +11,7 @@ import {
   Res,
   UnauthorizedException,
 } from '@nestjs/common';
+import { extractToken } from 'src/global/global.extract.token';
 
 @Controller('auth/google')
 export class ControllerAuth {
@@ -29,6 +30,7 @@ export class ControllerAuth {
       const user = req['user'];
       const { access_token } = await this.serviceAuth.generateToken({
         email: user['user'].dataValues.email,
+        username: user['user'].dataValues.username,
       });
 
       res.cookie('access_token', access_token, {
@@ -51,7 +53,7 @@ export class ControllerAuth {
     try {
       return res.json({
         isAuthenticated: true,
-        user: { name: 'Heja' },
+        user: _req.user,
       });
     } catch (error) {
       return res.json({ isAuthenticated: false });
