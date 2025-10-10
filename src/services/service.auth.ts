@@ -36,13 +36,6 @@ export class ServiceAuth {
     return await this.repository.findOne(token);
   }
 
-  // async updateLoggedIn(email: InterfaceUserEmail, status: boolean) {
-  //   let user: User | null = await this.repositoryUser.findByEmail(email);
-  //   if (!user) return null;
-
-  //   return await this.repositoryUser.updateLoggedIn(email, status);
-  // }
-
   constructor(
     private service: JwtService,
     private repository: RepositoryAuth,
