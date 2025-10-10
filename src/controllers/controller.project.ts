@@ -73,7 +73,6 @@ export class ControllerProject {
     }
 
     await this.service.deleteWithOwnTasks(projectId);
-
     return {};
   }
 
