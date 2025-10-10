@@ -26,6 +26,7 @@ export class ServiceAuth {
       expiresIn: '7d',
     });
 
+    console.log('Generated Token: ', access_token);
     return { access_token, refresh_token };
   }
 

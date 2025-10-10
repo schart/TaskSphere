@@ -27,7 +27,13 @@ async function bootstrap() {
     credentials: true,
   });
 
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }
+
   await app.listen(process.env.PORT ?? 3000);
 }
 
+declare const module: any;
 bootstrap();

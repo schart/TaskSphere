@@ -1,5 +1,10 @@
 import { Project } from 'src/models';
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { InterfaceUserId } from 'src/structures';
 import {
@@ -11,23 +16,36 @@ import { InterfaceProjectId } from 'src/structures/types/type.project';
 
 @Injectable()
 export class ServiceProject {
-  async create(
-    body: DtoProjectCreate,
-    { _id }: InterfaceUserId,
-  ): Promise<Project> {
-    return await this.repository.create({ ...body, ownerId: _id });
+  async create(body: DtoProjectCreate, id: InterfaceUserId): Promise<Project> {
+    const existing = await this.findByUserId(id);
+    if (existing) {
+      throw new ConflictException('A user can have only one active project.');
+    }
+
+    return await this.repository.create({ ...body, ownerId: id });
   }
 
   async update(
     body: DtoProjectUpdate,
-    id: InterfaceProjectId,
-  ): Promise<Project | null> {
-    return await this.repository.update(body, id);
+    id: InterfaceUserId,
+    projectId: InterfaceProjectId,
+  ): Promise<Project> {
+    const existing = await this.findByUserId(id); // Exist project
+    if (!existing) {
+      throw new NotFoundException('User has not an project.');
+    }
+
+    if (Number(existing.id) != Number(projectId._id)) {
+      throw new UnauthorizedException(
+        'You have to be its owner to update a project',
+      );
+    }
+
+    return await this.repository.update(body, projectId);
   }
 
   async findByUserId(id: InterfaceUserId): Promise<Project | null> {
     const userProject: Project | null = await this.repository.findByUserId(id);
-
     if (!userProject) {
       return null;
     }

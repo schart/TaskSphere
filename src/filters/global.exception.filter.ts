@@ -24,6 +24,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         ? exception.getResponse()
         : 'Internal server error';
 
+    console.error('Error: ' + exception);
+
     response.status(status).json({
       statusCode: status,
       timestamp: new Date().toISOString(),

@@ -19,7 +19,6 @@ export class GuardJwtAuth extends AuthGuard('jwt') {
 
     const user = this.jwtService.decode(token);
     request.user = user;
-
     return true;
   }
 
@@ -56,7 +55,7 @@ export class GuardShouldBeOwnerOfReq {
     }
 
     const { _id: userId }: InterfaceUserId = {
-      _id: String(user.dataValues._id),
+      _id: String(user.id),
     };
 
     request.ownerId = userId;

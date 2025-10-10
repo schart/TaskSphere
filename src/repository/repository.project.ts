@@ -32,8 +32,8 @@ export class RepositoryProject extends Repository<Project> {
         returning: true,
       },
     );
-    let updatedUserResult = !affectedRows ? null : affectedRows[0].dataValues;
-    return updatedUserResult;
+
+    return affectedRows;
   }
 
   async find(): Promise<Project[] | null> {

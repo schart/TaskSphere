@@ -1,6 +1,5 @@
 import {
   Body,
-  ConflictException,
   Controller,
   Delete,
   NotFoundException,
@@ -10,18 +9,18 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import type { Request } from 'express';
-import { checkParamIsNumber } from 'src/global/global.check.number.param';
-import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
-import { GuardJwtAuth, GuardShouldBeOwnerOfReq } from 'src/guards/guard.jwt';
 import { Project } from 'src/models';
-import { ServiceProject } from 'src/services/service.project';
+import type { Request } from 'express';
 import { InterfaceUserId } from 'src/structures';
+import { ServiceProject } from 'src/services/service.project';
+import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
+import { InterfaceProjectId } from 'src/structures/types/type.project';
+import { checkParamIsNumber } from 'src/global/global.check.number.param';
+import { GuardJwtAuth, GuardShouldBeOwnerOfReq } from 'src/guards/guard.jwt';
 import {
   DtoProjectCreate,
   DtoProjectUpdate,
 } from 'src/structures/dto/dto.project';
-import { InterfaceProjectId } from 'src/structures/types/type.project';
 
 @Controller('project')
 export class ControllerProject {
@@ -31,19 +30,10 @@ export class ControllerProject {
     const ownerIdRaw = retrieveOwnerId(req);
     const ownerId: InterfaceUserId = { _id: ownerIdRaw };
 
-    const project: Project | null = await this.service.findByUserId(ownerId);
-    if (project) {
-      throw new ConflictException(
-        'A user can have just one project at the same time.',
-      );
-    }
+    await this.service.findByUserId(ownerId);
+    const createdProject = await this.service.create(body, ownerId);
 
-    let createdProject = await this.service.create(body, ownerId);
-    let projectResult = !createdProject ? null : createdProject.dataValues;
-
-    return {
-      ...projectResult,
-    };
+    return createdProject?.dataValues ?? createdProject;
   }
 
   @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
@@ -59,16 +49,13 @@ export class ControllerProject {
     const ownerIdRaw = retrieveOwnerId(req);
     const ownerId: InterfaceUserId = { _id: ownerIdRaw };
 
-    const project: Project | null = await this.service.findByUserId(ownerId);
-    if (!project) {
-      throw new NotFoundException('Project Not found');
-    }
-
-    const updatedProject: Project | null = await this.service.update(
+    const updatedProject: Project = await this.service.update(
       body,
+      ownerId,
       projectId,
     );
-    return { ...updatedProject };
+
+    return updatedProject.dataValues ?? updatedProject;
   }
 
   @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
