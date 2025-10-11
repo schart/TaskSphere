@@ -21,7 +21,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, any> {
         success: true,
         statusCode: 200,
         content,
-        message: content['message'] || null,
+        message: 'Successfully!',
         timestamp: new Date().toISOString(),
       })),
     );

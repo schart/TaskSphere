@@ -2,7 +2,7 @@ import {
   Body,
   Controller,
   Delete,
-  NotFoundException,
+  Get,
   Param,
   Patch,
   Post,
@@ -24,6 +24,21 @@ import {
 
 @Controller('project')
 export class ControllerProject {
+  // @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
+  // @Get('/')
+  // async get() {}
+
+  @UseGuards(GuardJwtAuth)
+  @Get('/:id')
+  async getDetail(@Req() _req: Request, @Param('id') param: any) {
+    const projectIdRaw = checkParamIsNumber(param);
+    const projectId: InterfaceProjectId = { _id: projectIdRaw };
+
+    const projects: Project | null = await this.service.getDetail(projectId);
+
+    return projects?.dataValues ?? projects;
+  }
+
   @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
   @Post('/')
   async create(@Body() body: DtoProjectCreate, @Req() req: Request) {
@@ -67,8 +82,7 @@ export class ControllerProject {
     const ownerIdRaw = retrieveOwnerId(req);
     const ownerId: InterfaceUserId = { _id: ownerIdRaw };
 
-    await this.service.delete(ownerId, projectId);
-    return { message: 'Successfully!' };
+    return await this.service.delete(ownerId, projectId);
   }
 
   constructor(private readonly service: ServiceProject) {}

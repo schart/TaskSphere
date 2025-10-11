@@ -16,13 +16,19 @@ import { InterfaceProjectId } from 'src/structures/types/type.project';
 
 @Injectable()
 export class ServiceProject {
+  async getDetail(id: InterfaceProjectId): Promise<Project | null> {
+    const projects: Project | null = await this.repository.findByPk(id);
+
+    return projects?.dataValues ?? projects;
+  }
+
   async create(body: DtoProjectCreate, id: InterfaceUserId): Promise<Project> {
     const existing = await this.findByUserId(id);
     if (existing) {
       throw new ConflictException('A user can have only one active project.');
     }
 
-    return await this.repository.create({ ...body, ownerId: id });
+    return await this.repository.create({ ...body, ownerId: id._id });
   }
 
   async update(
@@ -30,12 +36,15 @@ export class ServiceProject {
     id: InterfaceUserId,
     projectId: InterfaceProjectId,
   ): Promise<Project> {
-    const existing = await this.findByUserId(id); // Exist project
+    const existing = await this.findByUserId(id);
     if (!existing) {
       throw new NotFoundException('User has not an project.');
     }
 
-    if (Number(existing.id) != Number(projectId._id)) {
+    console.log(existing.dataValues.id, id._id);
+    console.log(projectId);
+
+    if (Number(existing.dataValues.ownerId) != Number(id._id)) {
       throw new UnauthorizedException(
         'You have to be its owner to update a project',
       );
@@ -44,8 +53,20 @@ export class ServiceProject {
     return await this.repository.update(body, projectId);
   }
 
+  async checkUserOwnerProject(
+    userId: InterfaceUserId,
+    projectId: InterfaceProjectId,
+  ) {
+    const existing: Project | null =
+      await this.repository.checkUserOwnerProject(userId, projectId);
+
+    if (!existing) return null;
+    return existing;
+  }
+
   async findByUserId(id: InterfaceUserId): Promise<Project | null> {
     const userProject: Project | null = await this.repository.findByUserId(id);
+
     if (!userProject) {
       return null;
     }
@@ -53,23 +74,25 @@ export class ServiceProject {
     return userProject;
   }
 
-  async delete(userId: InterfaceUserId, id: InterfaceProjectId) {
+  async delete(userId: InterfaceUserId, projectId: InterfaceProjectId) {
     const tx = await this.sequelize.transaction();
     try {
-      const existing: Project | null = await this.findByUserId(userId);
-      if (!existing) {
-        throw new NotFoundException('Project Not Found.');
-      }
+      const existing: Project | null = await this.checkUserOwnerProject(
+        userId,
+        projectId,
+      );
+      console.log('existing: ', existing);
 
-      if (Number(existing.dataValues.ownerId) != Number(userId._id)) {
+      if (!existing) {
         throw new UnauthorizedException(
           'You have to be its owner to update a project',
         );
       }
 
-      await this.repository.delete(id, tx);
-    } catch {
+      await this.repository.delete(projectId, tx);
+    } catch (e) {
       tx.rollback();
+      throw e;
     }
   }
 
