@@ -1,7 +1,7 @@
 ### 🧭 TaskSphere – Görev Yönetim Sistemi
 
 TaskSphere, kullanıcıların kişisel projelerini ve bu projelere ait görevlerini yönetmelerini sağlayan bir görev takip platformudur.  
-Sade, güvenli ve modüler bir NestJS mimarisi üzerine inşa edilmiştir.
+Sade, güvenli ve modüler bir NestJS mimarisi üzerine inşa edilmiştir .
 
 ---
 
