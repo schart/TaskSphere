@@ -27,13 +27,13 @@ export class RepositoryProject extends Repository<Project> {
       },
       {
         where: {
-          _id: _id,
+          id: _id,
         },
         returning: true,
       },
     );
-    let updatedUserResult = !affectedRows ? null : affectedRows[0].dataValues;
-    return updatedUserResult;
+
+    return affectedRows;
   }
 
   async find(): Promise<Project[] | null> {
@@ -52,13 +52,22 @@ export class RepositoryProject extends Repository<Project> {
     });
   }
 
-  async deleteWithOwnTasks(
-    { _id }: InterfaceProjectId,
-    tx: sequelize.Transaction,
+  async checkUserOwnerProject(
+    { _id: userId }: InterfaceUserId,
+    { _id: projectId }: InterfaceProjectId,
   ) {
+    return await this.model.findOne({
+      where: {
+        id: projectId,
+        ownerId: userId,
+      },
+    });
+  }
+
+  async delete({ _id }: InterfaceProjectId, tx: sequelize.Transaction) {
     await this.model.destroy({
       where: {
-        _id: _id,
+        id: _id,
       },
       transaction: tx,
     });

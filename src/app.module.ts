@@ -28,20 +28,30 @@ import { GuardGoogleOauth, StrategyGoogleOauth } from './strategies';
   imports: [
     SequelizeModule.forRoot({
       dialect: 'postgres',
-      host: 'localhost',
+      host: '127.0.0.1',
       port: 5432,
       username: 'postgres',
       password: 'root',
       database: 'tasksphere_db',
-      autoLoadModels: true,
       synchronize: true,
+      logging: true, // enable logging to see errors
+      models: [
+        Task,
+        Role,
+        Project,
+        User,
+        Permission,
+        RevokedToken,
+        ProjectWorker,
+        RolesPermissions,
+      ],
     }),
 
     SequelizeModule.forFeature([
-      User,
       Task,
       Role,
       Project,
+      User,
       Permission,
       RevokedToken,
       ProjectWorker,

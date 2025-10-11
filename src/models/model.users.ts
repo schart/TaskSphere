@@ -9,16 +9,19 @@ import {
 import { Role } from './model.roles';
 import { InterfaceUserCreation } from 'src/structures/types/type.user';
 
-@Table
+@Table({ tableName: 'users' })
 export class User extends Model<InterfaceUserCreation> {
-  @Column({ primaryKey: true, autoIncrement: true })
-  _id: number;
+  // @Column({ type: DataType.STRING, primaryKey: true, autoIncrement: true })
+  // _id: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
   username: string;
 
   @Column({ type: DataType.STRING, allowNull: false, unique: true })
   email: string;
+
+  // @Column({ type: DataType.BOOLEAN })
+  // loggedIn: boolean;
 
   @ForeignKey(() => Role)
   @Column({ type: DataType.INTEGER, allowNull: true })

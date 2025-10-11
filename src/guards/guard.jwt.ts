@@ -4,22 +4,28 @@ import { AuthGuard } from '@nestjs/passport';
 import { RepositoryUser } from 'src/repository';
 import { InterfaceUserEmail, InterfaceUserId } from 'src/structures';
 import { Injectable, ExecutionContext } from '@nestjs/common';
-import { extractToken } from 'src/global/global.extract.token';
+import { Request } from 'express';
 
 @Injectable()
 export class GuardJwtAuth extends AuthGuard('jwt') {
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
-    const token = extractToken(request.headers['authorization']);
+    const request: Request = context.switchToHttp().getRequest();
+
+    const token = request.cookies['access_token'];
     if (!token) return false;
 
     const isRevoked = await this.authService.checkRevokedToken(token);
     if (isRevoked) return false;
 
-    return super.canActivate(context) as boolean;
+    const user = this.jwtService.decode(token);
+    request.user = user;
+    return true;
   }
 
-  constructor(private readonly authService: ServiceAuth) {
+  constructor(
+    private readonly authService: ServiceAuth,
+    private readonly jwtService: JwtService,
+  ) {
     super();
   }
 }
@@ -28,7 +34,7 @@ export class GuardJwtAuth extends AuthGuard('jwt') {
 export class GuardNoJwtTokenAuth {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    const token = extractToken(request.headers['authorization']);
+    const token = request.cookies['access_token'];
 
     return !token;
   }
@@ -39,7 +45,7 @@ export class GuardShouldBeOwnerOfReq {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
 
-    const token = extractToken(request.headers['authorization']);
+    const token = request.cookies['access_token'];
     const decodedToken: string = this.jwtService.decode(token);
 
     const email: InterfaceUserEmail = { email: decodedToken['email'] };
@@ -49,7 +55,7 @@ export class GuardShouldBeOwnerOfReq {
     }
 
     const { _id: userId }: InterfaceUserId = {
-      _id: String(user.dataValues._id),
+      _id: String(user.id),
     };
 
     request.ownerId = userId;

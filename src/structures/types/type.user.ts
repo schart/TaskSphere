@@ -6,6 +6,7 @@ export interface InterfaceUserAttributes {
   username: string;
   email: string;
   roleId?: number;
+  loggedIn?: boolean;
 }
 
 export interface InterfaceUserId extends Pick<InterfaceUserAttributes, '_id'> {}

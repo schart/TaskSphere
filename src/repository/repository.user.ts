@@ -14,6 +14,7 @@ import { Repository } from './repository.base';
 @Injectable()
 export class RepositoryUser extends Repository<User> {
   async create(creationInterface: InterfaceUserCreation): Promise<User> {
+    creationInterface.loggedIn = false;
     return await this.model.create(creationInterface);
   }
 
@@ -49,6 +50,19 @@ export class RepositoryUser extends Repository<User> {
       },
     });
   }
+
+  // async updateLoggedIn({ email }: InterfaceUserEmail, status: boolean) {
+  //   return await this.model.update(
+  //     {
+  //       loggedIn: status,
+  //     },
+  //     {
+  //       where: {
+  //         email: email,
+  //       },
+  //     },
+  //   );
+  // }
 
   constructor(@InjectModel(User) private readonly model: TypeUserModelStatic) {
     super();

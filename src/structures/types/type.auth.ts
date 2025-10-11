@@ -6,6 +6,11 @@ export interface InterfaceCredentials {
   callbackURL: string | undefined;
 }
 
+export interface InterfaceJwtPayload {
+  username: string;
+  email: string;
+}
+
 export type InterfaceRevokedTokenModel = typeof RevokedToken & {
   new (): RevokedToken;
 };
