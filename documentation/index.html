@@ -97,95 +97,145 @@
                    <div class="content-data">
 
 
-<h1>TaskSphere</h1>
-<p><strong>TaskSphere</strong> is a task and project management application inspired by tools like <strong>Atlassian Jira</strong>, designed to help teams break down projects into manageable stages such as <strong>To Do, In Progress, Done, and Review</strong>.</p>
+<p>📘 Read this in: <a href="./READMETR.md">🇹🇷 </a> | <a href="./README.md">🇬🇧 English</a></p>
+<h3>🧭 TaskSphere – Task Management System</h3>
+<p>TaskSphere is a personal project and task management platform built with a clean, secure, and modular <strong>NestJS</strong> architecture.<br>It allows each user to manage their own project and organize tasks efficiently .</p>
 <hr>
-<h2>Technologies Used</h2>
+<h3>⚙️ Tech Stack</h3>
+<table class="table table-bordered compodoc-table">
+<thead>
+<tr>
+<th>Layer</th>
+<th>Technology</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Backend Framework</strong></td>
+<td><a href="https://nestjs.com/">NestJS</a> (TypeScript)</td>
+</tr>
+<tr>
+<td><strong>ORM / Database</strong></td>
+<td><a href="https://sequelize.org/">Sequelize</a> + PostgreSQL</td>
+</tr>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>JWT (Server-side token management)</td>
+</tr>
+<tr>
+<td><strong>Documentation</strong></td>
+<td>Compodoc</td>
+</tr>
+<tr>
+<td><strong>Testing</strong></td>
+<td>Jest (planned)</td>
+</tr>
+<tr>
+<td><strong>Runtime Env</strong></td>
+<td>Node.js v18+</td>
+</tr>
+<tr>
+<td><strong>Containerization (optional)</strong></td>
+<td>Docker</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3>🧱 Application Layers</h3>
 <ul>
-<li><p><strong>Project and Time Management:</strong> Jira</p>
-</li>
-<li><p><strong>API Design:</strong> Notion</p>
-</li>
-<li><p><strong>Database Design:</strong> DB.diagram.io</p>
-</li>
-<li><p><strong>Backend:</strong> NestJS</p>
-</li>
-<li><p><strong>Database:</strong> PostgreSQL</p>
-</li>
-<li><p><strong>Cache:</strong> Redis</p>
-</li>
+<li><strong>Controller</strong> → Handles HTTP routes (<code>/project</code>, <code>/task</code>)</li>
+<li><strong>Service</strong> → Contains business logic and data flow</li>
+<li><strong>Repository</strong> → Manages database operations (Sequelize)</li>
+<li><strong>Entity (Model)</strong> → Represents database tables</li>
+<li><strong>Guard</strong> → Handles authentication and authorization</li>
 </ul>
 <hr>
-<h1>API Design</h1>
-<h2>Authentication &amp; Registration</h2>
+<h3>🧠 Main Flow</h3>
+<ol>
+<li>The user registers or logs in.</li>
+<li>The JWT token is managed <strong>server-side</strong>.</li>
+<li>A user can create <strong>only one project</strong> at a time.</li>
+<li>The user can add, complete, or delete tasks within their project.</li>
+<li>All routes are protected by guards (<code>GuardJwtAuth</code>, <code>GuardShouldBeOwnerOfReq</code>).</li>
+</ol>
+<hr>
+<h3>⚖️ Business Rules (Domain Logic)</h3>
+<h4>👤 User</h4>
 <ul>
-<li><p><code>GET /auth/google</code>
-Redirects users to Google’s OAuth 2.0 consent screen for authentication.</p>
-</li>
-<li><p><code>GET /auth/google/callback</code>
-Callback endpoint for Google to redirect after user consent. Handles user info retrieval and JWT token issuance.</p>
-</li>
+<li>A user cannot register twice with the same email.</li>
+<li>When a user is deleted, all their projects and tasks are removed as well.</li>
+</ul>
+<h4>🧱 Project</h4>
+<ul>
+<li>Each user can own <strong>only one project</strong>.</li>
+<li>If a project already exists, return <code>409 Conflict</code>.</li>
+<li>Projects can be updated or deleted only by their owner.</li>
+<li>Deleting a project cascades and removes related tasks.</li>
+</ul>
+<h4>🗒️ Task</h4>
+<ul>
+<li>Each task must belong to a project.</li>
+<li>Tasks can be created only by the project owner.</li>
+<li>Task states: <code>pending</code>, <code>done</code>.</li>
+<li>Only the project owner can modify or delete tasks.</li>
+</ul>
+<h4>🔐 Security</h4>
+<ul>
+<li>All requests are protected by <code>GuardJwtAuth</code>.</li>
+<li>Ownership is enforced by <code>GuardShouldBeOwnerOfReq</code>.</li>
+<li>Tokens are verified <strong>server-side</strong> (no localStorage usage).</li>
 </ul>
 <hr>
-<h2>Projects</h2>
+<h3>🗄️ Database Structure</h3>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">User (1) ─── (1) Project (1) ─── (*) Task</code></pre></div><table class="table table-bordered compodoc-table">
+<thead>
+<tr>
+<th>Entity</th>
+<th>Field</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>User</strong></td>
+<td>id, email, password</td>
+<td>PK</td>
+</tr>
+<tr>
+<td><strong>Project</strong></td>
+<td>id, ownerId (FK→User), title, description</td>
+<td>PK+FK</td>
+</tr>
+<tr>
+<td><strong>Task</strong></td>
+<td>id, projectId (FK→Project), title, status</td>
+<td>PK+FK</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3>🧭 Future Enhancements</h3>
 <ul>
-<li><p><code>POST /projects</code>
-Create a new project.
-<strong>Access:</strong> Admin only.</p>
-</li>
-<li><p><code>PATCH /projects/:id</code>
-Update project metadata or assign/remove users to/from the project.
-<strong>Access:</strong> Admin only.</p>
-</li>
-<li><p><code>DELETE /projects/:id</code>
-Delete a project by ID.
-<strong>Access:</strong> Admin only.</p>
-</li>
+<li>Multi-project support (1 user → N projects)</li>
+<li>Team collaboration and shared access</li>
+<li>Task comments and attachments</li>
+<li>Real-time updates via WebSockets</li>
+<li>Automated testing and CI/CD integration</li>
 </ul>
 <hr>
-<h2>Tasks</h2>
-<ul>
-<li><p><code>GET /tasks</code>
-Retrieve all non-private tasks of a project.
-<em>Supports filtering by project ID, status, assigned worker, and pagination.</em></p>
-</li>
-<li><p><code>POST /tasks</code>
-Create a new task.
-<strong>Access:</strong> Admin only.</p>
-</li>
-<li><p><code>PATCH /tasks/:id</code>
-Update task details.
-<strong>Access:</strong> Admin only.</p>
-</li>
-<li><p><code>DELETE /tasks/:id</code>
-Delete a task by ID.
-<strong>Access:</strong> Admin only.</p>
-</li>
-</ul>
-<hr>
-<h2>Users</h2>
-<ul>
-<li><p><code>GET /users</code>
-Retrieve a list of all users.
-<strong>Access:</strong> Admin only.</p>
-</li>
-<li><p><code>GET /users/project/:projectId</code>
-Retrieve all users assigned to a specific project.
-<strong>Access:</strong> Project owner or Admin.</p>
-</li>
-<li><p><code>GET /users/me</code>
-Retrieve the authenticated user’s profile details.
-<strong>Access:</strong> Authenticated user.</p>
-</li>
-<li><p><code>DELETE /users/:id</code>
-Delete a user by ID.
-<strong>Access:</strong> Admin only.</p>
-</li>
-</ul>
-<hr>
-<h1>Database Design</h1>
-<p>Refer to the <a href="https://dbdiagram.io/e/67da49e875d75cc8449e7263/689ae7881d75ee360a2b6507">TaskSphere Database Diagram</a> for the detailed schema.</p>
-<hr>
+<h3>🚀 Running Locally</h3>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash"># Install dependencies
+npm install
+
+# Configure your environment file
+# cp .env.example .env
+
+# Start development server
+npm run start:dev
+
+http://localhost:3000/</code></pre></div><hr>
+<h3>📘 License</h3>
+<h2>MIT © 2025 Heja Arslan</h2>
 
 
 

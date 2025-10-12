@@ -2,10 +2,10 @@ import { Optional } from 'sequelize';
 import { Project } from 'src/models';
 
 export interface InterfaceProjectAttributes {
-  _id: string;
-  title: string;
-  ownerId: number;
-  description: string;
+  _id?: number;
+  ownerId?: number;
+  title?: string;
+  description?: string;
 }
 
 export interface InterfaceProjectId
@@ -16,5 +16,3 @@ export interface InterfaceProjectCreation
 
 export interface InterfaceProjectUpdate
   extends Pick<InterfaceProjectAttributes, 'title' | 'description'> {}
-
-export type TypeProjectModel = typeof Project & { new (): Project };

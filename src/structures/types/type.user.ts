@@ -2,7 +2,7 @@ import { Optional } from 'sequelize';
 import { User } from 'src/models';
 
 export interface InterfaceUserAttributes {
-  _id: string;
+  _id: number;
   username: string;
   email: string;
   roleId?: number;
