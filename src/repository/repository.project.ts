@@ -1,10 +1,9 @@
 import type {
-  TypeProjectModel,
   InterfaceProjectId,
   InterfaceProjectUpdate,
   InterfaceProjectCreation,
 } from 'src/structures/types/type.project';
-import { Project, Task } from 'src/models';
+import { Project, Task, User } from 'src/models';
 import { Injectable } from '@nestjs/common';
 import { Repository } from './repository.base';
 import { InjectModel } from '@nestjs/sequelize';
@@ -108,7 +107,24 @@ export class RepositoryProject extends Repository<Project> {
    * @returns {Promise<Project | null>} - The found project, or null if not found.
    */
   async findByPk({ _id }: InterfaceProjectId): Promise<Project | null> {
-    return await this.model.findByPk(_id);
+    return this.model.findByPk(_id, {
+      include: [
+        {
+          as: 'owner',
+          model: User,
+          attributes: ['email', 'username'],
+          required: false,
+        },
+        {
+          as: 'tasks',
+          model: this.taskModel,
+          attributes: ['title', 'description', 'status'],
+          order: [[{ model: this.taskModel, as: 'tasks' }, 'createdAt', 'ASC']],
+          required: false,
+        },
+      ],
+      attributes: ['title', 'description', 'createdAt'],
+    });
   }
 
   /**
@@ -124,7 +140,7 @@ export class RepositoryProject extends Repository<Project> {
   }
 
   constructor(
-    @InjectModel(Project) private readonly model: TypeProjectModel,
+    @InjectModel(Project) private readonly model: typeof Project,
     @InjectModel(Task) private readonly taskModel: typeof Task,
     private readonly sequelize: Sequelize,
   ) {
