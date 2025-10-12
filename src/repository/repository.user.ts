@@ -1,70 +1,74 @@
-import { User } from 'src/models';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Project, Role, User } from 'src/models';
 import type {
   TypeUserModelStatic,
+  InterfaceUserCreation,
   InterfaceUserUpdate,
   InterfaceUserId,
-  InterfaceUserCreation,
-  InterfaceUserAttributes,
   InterfaceUserEmail,
 } from 'src/structures/types/type.user';
 import { Repository } from './repository.base';
 
 @Injectable()
 export class RepositoryUser extends Repository<User> {
-  async create(creationInterface: InterfaceUserCreation): Promise<User> {
-    creationInterface.loggedIn = false;
-    return await this.model.create(creationInterface);
+  /**
+   * Create a new user
+   */
+  async create(dto: InterfaceUserCreation): Promise<User> {
+    return this.model.create(dto as any);
   }
 
+  /**
+   * Update a user by ID
+   */
   async update(
-    updateInterface: InterfaceUserUpdate,
+    dto: InterfaceUserUpdate,
     { _id }: InterfaceUserId,
-  ): Promise<User | any> {
-    const [_, affectedRows] = await this.model.update(
-      {
-        ...updateInterface,
-      },
-      {
-        where: { _id: _id },
-        returning: true,
-      },
-    );
+  ): Promise<User | null> {
+    const [_, affectedRows] = await this.model.update(dto, {
+      where: { id: _id },
+      returning: true,
+    });
 
-    return affectedRows || null;
+    return affectedRows.length ? affectedRows[0] : null;
   }
 
-  async find(): Promise<User[] | null> {
-    return await this.model.findAll();
+  /**
+   * Get all users
+   */
+  async find(): Promise<User[]> {
+    return this.model.findAll();
   }
 
+  /**
+   * Find a user by primary key (ID)
+   */
   async findByPk({ _id }: InterfaceUserId): Promise<User | null> {
-    return await this.model.findByPk(_id);
-  }
-
-  async findByEmail({ email }: InterfaceUserEmail): Promise<User | null> {
-    return await this.model.findOne({
-      where: {
-        email: email,
-      },
+    return this.model.findByPk(_id, {
+      attributes: { exclude: ['updatedAt'] },
+      include: [
+        {
+          as: 'role',
+          model: Role,
+        },
+        {
+          as: 'project',
+          model: Project,
+          attributes: { exclude: ['updatedAt', 'ownerId'] },
+        },
+      ],
     });
   }
 
-  // async updateLoggedIn({ email }: InterfaceUserEmail, status: boolean) {
-  //   return await this.model.update(
-  //     {
-  //       loggedIn: status,
-  //     },
-  //     {
-  //       where: {
-  //         email: email,
-  //       },
-  //     },
-  //   );
-  // }
+  /**
+   * Find a user by email
+   */
+  async findByEmail({ email }: InterfaceUserEmail): Promise<User | null> {
+    return this.model.findOne({ where: { email } });
+  }
 
-  constructor(@InjectModel(User) private readonly model: TypeUserModelStatic) {
+  constructor(@InjectModel(User) private readonly model: typeof User) {
     super();
   }
 }
