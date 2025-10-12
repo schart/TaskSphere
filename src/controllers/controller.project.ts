@@ -46,7 +46,6 @@ export class ControllerProject {
     const ownerIdRaw = retrieveOwnerId(req);
     const ownerId: InterfaceUserId = { _id: ownerIdRaw };
 
-    await this.service.findByUserIdService(ownerId);
     const createdProject = await this.service.createService(body, ownerId);
 
     return createdProject?.dataValues ?? createdProject;
@@ -65,13 +64,7 @@ export class ControllerProject {
     const ownerIdRaw = retrieveOwnerId(req);
     const ownerId: InterfaceUserId = { _id: ownerIdRaw };
 
-    const updatedProject: Project | null = await this.service.updateService(
-      body,
-      ownerId,
-      projectId,
-    );
-
-    return updatedProject?.dataValues ?? updatedProject;
+    return await this.service.updateService(body, ownerId, projectId);
   }
 
   @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)

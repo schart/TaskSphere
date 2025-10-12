@@ -53,7 +53,6 @@ export class RepositoryProject extends Repository<Project> {
    */
   async delete({ _id }: InterfaceProjectId): Promise<number> {
     const tx = await this.sequelize.transaction();
-
     try {
       // Delete task of project
       await this.taskModel.destroy({
@@ -64,9 +63,10 @@ export class RepositoryProject extends Repository<Project> {
       // Delete project itself
       const deletedCount = await this.model.destroy({
         where: { id: _id },
-        // transaction: tx,
+        transaction: tx,
       });
 
+      tx.commit();
       return deletedCount;
     } catch (error) {
       if (tx) await tx.rollback();
@@ -114,8 +114,8 @@ export class RepositoryProject extends Repository<Project> {
    * @param {InterfaceProjectId} projectId - The ID of the project to delete
    * @returns {Promise<Project | null>} - The found project, or null if not found.
    */
-  async findByUserId({ _id }: InterfaceUserId): Promise<Project | null> {
-    return await this.model.findOne({
+  findByUserId({ _id }: InterfaceUserId): Promise<Project | null> {
+    return this.model.findOne({
       where: {
         ownerId: _id,
       },

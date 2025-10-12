@@ -19,7 +19,7 @@ export class ServiceProject {
     body: DtoProjectCreate,
     id: InterfaceUserId,
   ): Promise<Project> {
-    const existing = await this.findByUserIdService(id);
+    const existing = await this.repository.findByUserId(id);
     if (existing) {
       throw new ConflictException('A user can have only one active project.');
     }
@@ -32,21 +32,25 @@ export class ServiceProject {
     id: InterfaceUserId,
     projectId: InterfaceProjectId,
   ): Promise<null | Project> {
-    const existing = await this.findByUserIdService(id);
+    const existing = await this.checkUserOwnerProjectService(id, projectId);
     if (!existing) {
-      throw new NotFoundException('User has not an project.');
-    }
-
-    if (Number(existing.dataValues.ownerId) != Number(id._id)) {
       throw new UnauthorizedException(
         'You have to be its owner to update a project',
       );
     }
 
-    return await this.repository.update(body, projectId);
+    const updatedProject: Project | null = await this.repository.update(
+      body,
+      projectId,
+    );
+
+    return updatedProject?.dataValues ?? updatedProject;
   }
 
-  async deleteService(userId: InterfaceUserId, projectId: InterfaceProjectId) {
+  async deleteService(
+    userId: InterfaceUserId,
+    projectId: InterfaceProjectId,
+  ): Promise<number> {
     try {
       const existing: Project | null = await this.checkUserOwnerProjectService(
         userId,
@@ -59,7 +63,7 @@ export class ServiceProject {
         );
       }
 
-      await this.repository.delete(projectId);
+      return await this.repository.delete(projectId);
     } catch (e) {
       throw e;
     }
@@ -74,15 +78,6 @@ export class ServiceProject {
 
     if (!existing) return null;
     return existing;
-  }
-
-  async findByUserIdService(id: InterfaceUserId): Promise<Project | null> {
-    const userProject: Project | null = await this.repository.findByUserId(id);
-    if (!userProject) {
-      return null;
-    }
-
-    return userProject;
   }
 
   async getDetailService(id: InterfaceProjectId): Promise<Project | null> {
