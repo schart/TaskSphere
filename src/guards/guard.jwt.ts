@@ -3,7 +3,11 @@ import { ServiceAuth } from 'src/services';
 import { AuthGuard } from '@nestjs/passport';
 import { RepositoryUser } from 'src/repository';
 import { InterfaceUserEmail, InterfaceUserId } from 'src/structures';
-import { Injectable, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Request } from 'express';
 
 @Injectable()
@@ -44,9 +48,14 @@ export class GuardNoJwtTokenAuth {
 export class GuardShouldBeOwnerOfReq {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-
     const token = request.cookies['access_token'];
-    const decodedToken: string = this.jwtService.decode(token);
+
+    let decodedToken: object;
+    try {
+      decodedToken = this.jwtService.verify(token);
+    } catch {
+      throw new UnauthorizedException('Invalid token');
+    }
 
     const email: InterfaceUserEmail = { email: decodedToken['email'] };
     const user = await this.userRepository.findByEmail(email);
