@@ -15,78 +15,54 @@ import { InterfaceProjectId } from 'src/structures/types/type.project';
 
 @Injectable()
 export class ServiceProject {
-  async createService(
+  constructor(private readonly repository: RepositoryProject) {}
+
+  async create(
     body: DtoProjectCreate,
-    id: InterfaceUserId,
+    user: InterfaceUserId,
   ): Promise<Project> {
-    const existing = await this.repository.findByUserId(id);
+    const existing = await this.repository.findByUserId(user);
     if (existing) {
       throw new ConflictException('A user can have only one active project.');
     }
-
-    return await this.repository.create({ ...body, ownerId: id._id });
+    return this.repository.create({ ...body, ownerId: user._id });
   }
 
-  async updateService(
+  async update(
     body: DtoProjectUpdate,
-    id: InterfaceUserId,
+    user: InterfaceUserId,
     projectId: InterfaceProjectId,
-  ): Promise<null | Project> {
-    const existing = await this.checkUserOwnerProjectService(id, projectId);
-    if (!existing) {
+  ): Promise<Project | null> {
+    const project = await this.checkUserOwnerProject(user, projectId);
+    if (!project)
       throw new UnauthorizedException(
-        'You have to be its owner to update a project',
+        'You must be the owner to update this project.',
       );
-    }
 
-    const updatedProject: Project | null = await this.repository.update(
-      body,
-      projectId,
-    );
-
-    return updatedProject?.dataValues ?? updatedProject;
+    return this.repository.update(body, projectId);
   }
 
-  async deleteService(
-    userId: InterfaceUserId,
+  async delete(
+    user: InterfaceUserId,
     projectId: InterfaceProjectId,
   ): Promise<number> {
-    try {
-      const existing: Project | null = await this.checkUserOwnerProjectService(
-        userId,
-        projectId,
+    const project = await this.checkUserOwnerProject(user, projectId);
+    if (!project)
+      throw new UnauthorizedException(
+        'You must be the owner to delete this project.',
       );
 
-      if (!existing) {
-        throw new UnauthorizedException(
-          'You have to be its owner to delete a project',
-        );
-      }
-
-      return await this.repository.delete(projectId);
-    } catch (e) {
-      throw e;
-    }
+    return this.repository.delete(projectId);
   }
 
-  async checkUserOwnerProjectService(
-    userId: InterfaceUserId,
+  async checkUserOwnerProject(
+    user: InterfaceUserId,
     projectId: InterfaceProjectId,
-  ) {
-    const existing: Project | null =
-      await this.repository.checkUserOwnerProject(userId, projectId);
-
-    if (!existing) return null;
-    return existing;
+  ): Promise<Project | null> {
+    return this.repository.checkUserOwnerProject(user, projectId);
   }
 
-  async getDetailService(id: InterfaceProjectId): Promise<Project | null> {
-    const projects: Project | null = await this.repository.findByPk(id);
-    return projects?.dataValues ?? projects;
+  async getProjectById(id: InterfaceProjectId): Promise<Project | null> {
+    return this.repository.findByPk(id);
   }
-
-  constructor(
-    private readonly repository: RepositoryProject,
-    // private readonly sequelize: Sequelize,
-  ) {}
 }

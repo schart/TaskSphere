@@ -35,7 +35,7 @@ export class ControllerProject {
     const projectId: InterfaceProjectId = { _id: projectIdRaw };
 
     const projects: Project | null =
-      await this.service.getDetailService(projectId);
+      await this.service.getProjectById(projectId);
 
     return projects?.dataValues ?? projects;
   }
@@ -46,7 +46,7 @@ export class ControllerProject {
     const ownerIdRaw = retrieveOwnerId(req);
     const ownerId: InterfaceUserId = { _id: ownerIdRaw };
 
-    const createdProject = await this.service.createService(body, ownerId);
+    const createdProject = await this.service.create(body, ownerId);
 
     return createdProject?.dataValues ?? createdProject;
   }
@@ -64,7 +64,7 @@ export class ControllerProject {
     const ownerIdRaw = retrieveOwnerId(req);
     const ownerId: InterfaceUserId = { _id: ownerIdRaw };
 
-    return await this.service.updateService(body, ownerId, projectId);
+    return await this.service.update(body, ownerId, projectId);
   }
 
   @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
@@ -76,7 +76,7 @@ export class ControllerProject {
     const ownerIdRaw = retrieveOwnerId(req);
     const ownerId: InterfaceUserId = { _id: ownerIdRaw };
 
-    return await this.service.deleteService(ownerId, projectId);
+    return await this.service.delete(ownerId, projectId);
   }
 
   constructor(private readonly service: ServiceProject) {}

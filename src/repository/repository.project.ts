@@ -39,6 +39,7 @@ export class RepositoryProject extends Repository<Project> {
       returning: true,
     });
 
+    // No update
     if (updatedCount === 0) {
       return null;
     }
