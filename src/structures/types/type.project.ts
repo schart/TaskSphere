@@ -3,7 +3,7 @@ import { Project } from 'src/models';
 
 export interface InterfaceProjectAttributes {
   _id?: number;
-  ownerId?: string;
+  ownerId?: number;
   title?: string;
   description?: string;
 }

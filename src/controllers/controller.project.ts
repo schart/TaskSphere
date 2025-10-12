@@ -10,9 +10,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { Project } from 'src/models';
 import type { Request } from 'express';
-import { InterfaceUserId } from 'src/structures';
 import { ServiceProject } from 'src/services/service.project';
 import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
 import { GuardJwtAuth, GuardShouldBeOwnerOfReq } from 'src/guards/guard.jwt';
@@ -20,6 +18,7 @@ import {
   DtoProjectCreate,
   DtoProjectUpdate,
 } from 'src/structures/dto/dto.project';
+import { InterfaceUserId } from 'src/structures';
 
 @Controller('project')
 export class ControllerProject {
@@ -27,22 +26,21 @@ export class ControllerProject {
   // @Get('/')
   // async get() {}
 
-  @UseGuards(GuardJwtAuth)
+  @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
   @Get('/:id')
   async getDetail(
-    @Req() _req: Request,
+    @Req() req: Request,
     @Param('id', ParseIntPipe) projectId: number,
   ) {
-    return await this.service.getProjectById({ _id: projectId });
+    const userId: InterfaceUserId = retrieveOwnerId(req);
+    return await this.service.getProjectById({ _id: projectId }, userId);
   }
 
   @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
   @Post('/')
   async create(@Body() body: DtoProjectCreate, @Req() req: Request) {
     const ownerId = retrieveOwnerId(req);
-    const createdProject = await this.service.create(body, ownerId);
-
-    return createdProject?.dataValues ?? createdProject;
+    return await this.service.create(body, ownerId);
   }
 
   @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
@@ -63,7 +61,6 @@ export class ControllerProject {
     @Req() req: Request,
   ) {
     const ownerId = retrieveOwnerId(req);
-
     return await this.service.delete(ownerId, { _id: projectId });
   }
 
