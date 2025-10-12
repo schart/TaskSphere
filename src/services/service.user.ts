@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { User } from 'src/models';
 import { RepositoryUser } from 'src/repository';
 import {
@@ -9,23 +13,27 @@ import {
 
 @Injectable()
 export class UserService {
-  async updateService(
+  async update(
     body: InterfaceUserUpdate,
     _id: InterfaceUserId,
   ): Promise<User | null> {
     return await this.repository.update(body, _id);
   }
 
-  async retrieveDetailService(_id: InterfaceUserId): Promise<User | null> {
-    return await this.repository.findByPk(_id);
-  }
+  async getUserById(
+    userId: InterfaceUserId,
+    ownerId: InterfaceUserId,
+  ): Promise<User | null> {
+    const user: User | null = await this.repository.findByPk(userId);
+    if (!user) throw new NotFoundException('User not found.');
 
-  async loggedInService(email: InterfaceUserEmail): Promise<Boolean | any> {
-    const user: User | null = await this.repository.findByEmail(email);
-    if (!user) throw new NotFoundException('User not found');
-    console.log(user.dataValues.loggedIn);
-    if (user.dataValues.loggedIn == true) return true;
-    return false;
+    if (userId._id !== ownerId._id) {
+      throw new UnauthorizedException(
+        'You should be admin or yourself for retrieve details.',
+      );
+    }
+
+    return user.get({ plain: true });
   }
 
   constructor(private readonly repository: RepositoryUser) {}

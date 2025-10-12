@@ -7,6 +7,7 @@ import {
   UseGuards,
   Controller,
   UnauthorizedException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { User } from 'src/models';
 import type { Request } from 'express';
@@ -19,21 +20,19 @@ import { GuardJwtAuth, GuardShouldBeOwnerOfReq } from 'src/guards/guard.jwt';
 
 @Controller('user')
 export class ControllerUser {
-  @UseGuards(GuardJwtAuth)
+  @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
   @Get('/:id')
-  async retrieveDetail(@Req() _req: Request, @Param('id') param: string) {
-    const userIdRaw = checkParamIsNumber(param);
-    const userId: InterfaceUserId = { _id: userIdRaw };
-
-    let retrieveUserDetails: User | null =
-      await this.service.retrieveDetailService(userId);
-    let retrieveUserDetailsResult = !retrieveUserDetails
-      ? null
-      : retrieveUserDetails.dataValues;
-
-    return {
-      ...retrieveUserDetailsResult,
-    };
+  async getDetail(
+    @Req() req: Request,
+    @Param('id', ParseIntPipe) userId: number,
+  ) {
+    const ownerId = retrieveOwnerId(req);
+    return await this.service.getUserById(
+      {
+        _id: userId,
+      },
+      ownerId,
+    );
   }
 
   @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
@@ -41,25 +40,10 @@ export class ControllerUser {
   async update(
     @Req() req: Request,
     @Body() body: UpdateUserDto,
-    @Param('id') param: string,
+    @Param('id') userId: string,
   ) {
-    const ownerIdRaw = retrieveOwnerId(req);
-    const ownerId: InterfaceUserId = { _id: ownerIdRaw };
-
-    const updateUserIdRaw = checkParamIsNumber(param);
-    const updateUserId: InterfaceUserId = { _id: updateUserIdRaw };
-
-    const result = compareIds(ownerId, updateUserId);
-    if (!result) {
-      throw new UnauthorizedException(
-        'UnAuthorized: You can just access something in your authorization',
-      );
-    }
-
-    const updatedUser: User | null = await this.service.updateService(
-      body,
-      updateUserId,
-    );
+    const ownerId = retrieveOwnerId(req);
+    const updatedUser: User | null = await this.service.update(body, ownerId);
 
     let updatedUserResult = !updatedUser ? null : updatedUser[0].dataValues;
 

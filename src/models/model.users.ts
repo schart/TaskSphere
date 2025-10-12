@@ -5,12 +5,14 @@ import {
   DataType,
   BelongsTo,
   ForeignKey,
+  HasOne,
 } from 'sequelize-typescript';
 import { Role } from './model.roles';
 import { InterfaceUserCreation } from 'src/structures/types/type.user';
+import { Project } from './model.projects';
 
 @Table({ tableName: 'users' })
-export class User extends Model<InterfaceUserCreation> {
+export class User extends Model<User> {
   // @Column({ type: DataType.STRING, primaryKey: true, autoIncrement: true })
   // _id: string;
 
@@ -20,13 +22,14 @@ export class User extends Model<InterfaceUserCreation> {
   @Column({ type: DataType.STRING, allowNull: false, unique: true })
   email: string;
 
-  // @Column({ type: DataType.BOOLEAN })
-  // loggedIn: boolean;
-
   @ForeignKey(() => Role)
   @Column({ type: DataType.INTEGER, allowNull: true })
   roleId: number | null;
 
+  @HasOne(() => Project)
+  project: Project;
+  
   @BelongsTo(() => Role)
   role: Role;
+  length: any;
 }
