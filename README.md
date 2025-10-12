@@ -3,7 +3,7 @@
 ### 🧭 TaskSphere – Task Management System
 
 TaskSphere is a personal project and task management platform built with a clean, secure, and modular **NestJS** architecture.  
-It allows each user to manage their own project and organize tasks efficiently.
+It allows each user to manage their own project and organize tasks efficiently .
 
 ---
 
