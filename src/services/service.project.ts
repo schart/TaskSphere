@@ -106,6 +106,13 @@ export class ServiceProject {
     return this.repository.checkUserOwnerProject(user, projectId);
   }
 
+  async checkUserWorkerProject(
+    user: InterfaceUserId,
+    projectId: InterfaceProjectId,
+  ): Promise<boolean | null> {
+    return await this.repository.checkUserWorkerProject(user, projectId);
+  }
+
   /**
    * Retrieves a project by its ID, including related data.
    *
@@ -113,9 +120,27 @@ export class ServiceProject {
    * @returns {Promise<Project | null>} The found project as a plain object or null if not found.
    * @throws {NotFoundException} If no project is found.
    */
-  async getProjectById(id: InterfaceProjectId): Promise<Project | null> {
+  async getProjectById(
+    id: InterfaceProjectId,
+    userId: InterfaceUserId,
+  ): Promise<Project | null> {
     const project: Project | null = await this.repository.findByPk(id);
     if (!project) throw new NotFoundException('Project not found');
+
+    // Check owner?
+    const isOwner: Project | null = await this.repository.checkUserOwnerProject(
+      userId,
+      id,
+    );
+
+    // Check worker?
+    const isWorker: boolean | null =
+      await this.repository.checkUserWorkerProject(userId, id);
+
+    if (!isOwner && !isWorker)
+      throw new UnauthorizedException(
+        'You must be part of this project for see detail.',
+      );
 
     return project.get({ plain: true });
   }

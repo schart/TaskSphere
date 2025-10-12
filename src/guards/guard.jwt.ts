@@ -64,7 +64,7 @@ export class GuardShouldBeOwnerOfReq {
     }
 
     const { _id: userId }: InterfaceUserId = {
-      _id: String(user.id),
+      _id: user.id,
     };
 
     request.ownerId = userId;

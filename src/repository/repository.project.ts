@@ -3,7 +3,7 @@ import type {
   InterfaceProjectUpdate,
   InterfaceProjectCreation,
 } from 'src/structures/types/type.project';
-import { Project, Task, User } from 'src/models';
+import { Project, ProjectWorker, Task, User } from 'src/models';
 import { Injectable } from '@nestjs/common';
 import { Repository } from './repository.base';
 import { InjectModel } from '@nestjs/sequelize';
@@ -91,6 +91,27 @@ export class RepositoryProject extends Repository<Project> {
         ownerId: userId,
       },
     });
+  }
+
+  /**
+   * Checks if a given user is the worker of a specific project.
+   *
+   * @param {InterfaceUserId} user - The user object containing the user ID.
+   * @param {InterfaceProjectId} project - The project object containing the project ID.
+   * @returns {Promise<Project | null>} The project if the user is the worker, otherwise null.
+   */
+  async checkUserWorkerProject(
+    { _id: userId }: InterfaceUserId,
+    { _id: projectId }: InterfaceProjectId,
+  ): Promise<boolean | null> {
+    const project: any = await this.model.findByPk(projectId, {
+      include: [{ model: ProjectWorker }],
+    });
+
+    if (project.dataValues.workers.length === 0) return null;
+
+    const status = project.workers.some((w: any) => w.workerId === userId);
+    return status;
   }
 
   /**
