@@ -4,6 +4,8 @@
 /build
 /tmp
 
+logic-outline.md
+
 # Logs
 logs
 *.log
@@ -12,6 +14,7 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+
 
 # dotenv environment variable files
 .env

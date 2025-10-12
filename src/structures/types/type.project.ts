@@ -2,10 +2,10 @@ import { Optional } from 'sequelize';
 import { Project } from 'src/models';
 
 export interface InterfaceProjectAttributes {
-  _id: string;
-  title: string;
-  ownerId: number;
-  description: string;
+  _id?: string;
+  ownerId?: string;
+  title?: string;
+  description?: string;
 }
 
 export interface InterfaceProjectId

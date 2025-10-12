@@ -34,7 +34,8 @@ export class ControllerProject {
     const projectIdRaw = checkParamIsNumber(param);
     const projectId: InterfaceProjectId = { _id: projectIdRaw };
 
-    const projects: Project | null = await this.service.getDetail(projectId);
+    const projects: Project | null =
+      await this.service.getDetailService(projectId);
 
     return projects?.dataValues ?? projects;
   }
@@ -45,8 +46,8 @@ export class ControllerProject {
     const ownerIdRaw = retrieveOwnerId(req);
     const ownerId: InterfaceUserId = { _id: ownerIdRaw };
 
-    await this.service.findByUserId(ownerId);
-    const createdProject = await this.service.create(body, ownerId);
+    await this.service.findByUserIdService(ownerId);
+    const createdProject = await this.service.createService(body, ownerId);
 
     return createdProject?.dataValues ?? createdProject;
   }
@@ -64,13 +65,13 @@ export class ControllerProject {
     const ownerIdRaw = retrieveOwnerId(req);
     const ownerId: InterfaceUserId = { _id: ownerIdRaw };
 
-    const updatedProject: Project = await this.service.update(
+    const updatedProject: Project | null = await this.service.updateService(
       body,
       ownerId,
       projectId,
     );
 
-    return updatedProject.dataValues ?? updatedProject;
+    return updatedProject?.dataValues ?? updatedProject;
   }
 
   @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
@@ -82,7 +83,7 @@ export class ControllerProject {
     const ownerIdRaw = retrieveOwnerId(req);
     const ownerId: InterfaceUserId = { _id: ownerIdRaw };
 
-    return await this.service.delete(ownerId, projectId);
+    return await this.service.deleteService(ownerId, projectId);
   }
 
   constructor(private readonly service: ServiceProject) {}
