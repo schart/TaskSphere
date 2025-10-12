@@ -1,11 +1,11 @@
-import { Column, Model, Table, HasMany } from 'sequelize-typescript';
+import { Column, Model, Table, HasMany, DataType } from 'sequelize-typescript';
 import { User } from './model.users';
 import { RolesPermissions } from './model.roles.permissions';
 
-@Table
+@Table({ tableName: 'roles' })
 export class Role extends Model<Role> {
-  @Column({ primaryKey: true, autoIncrement: true })
-  _id: number;
+  // @Column({ type: DataType.STRING, primaryKey: true, autoIncrement: true })
+  // _id: string;
 
   @Column({ unique: true, allowNull: false })
   name: string;

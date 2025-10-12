@@ -1,18 +1,23 @@
 import { JwtService } from '@nestjs/jwt';
-import { RevokedToken } from 'src/models';
 import { Injectable } from '@nestjs/common';
+import { RepositoryUser } from 'src/repository';
+import { RevokedToken, User } from 'src/models';
+import { InterfaceJwtPayload, InterfaceUserEmail } from 'src/structures';
 import { RepositoryAuth } from 'src/repository/repository.auth';
 
 @Injectable()
 export class ServiceAuth {
-  async generateToken(
-    user: any,
-  ): Promise<{ access_token: string; refresh_token: string }> {
+  async generateToken({
+    email: email,
+    username: username,
+  }: InterfaceJwtPayload): Promise<{
+    access_token: string;
+    refresh_token: string;
+  }> {
     const payload = {
-      email: user['user'].dataValues.email,
+      email: email,
+      username: username,
     };
-
-    console.log('payload: ', payload);
 
     const access_token: string = this.service.sign(payload, {
       expiresIn: '1h',
@@ -21,13 +26,14 @@ export class ServiceAuth {
       expiresIn: '7d',
     });
 
+    console.log('Generated Token: ', access_token);
     return { access_token, refresh_token };
   }
 
   async revokeToken(token: string): Promise<void> {
     const revokedToken = this.repository.create({ token: token });
     if (!revokedToken) {
-      throw new Error('Error when creating revoked token');
+      throw new Error('Error when creating revoked token!');
     }
   }
 
@@ -38,5 +44,6 @@ export class ServiceAuth {
   constructor(
     private service: JwtService,
     private repository: RepositoryAuth,
+    private repositoryUser: RepositoryUser,
   ) {}
 }

@@ -9,13 +9,19 @@ import { map } from 'rxjs/operators';
 
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<T, any> {
-  intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    const request: Request = context.switchToHttp().getRequest();
+
+    if (request.url.includes('/auth/google/callback')) {
+      return next.handle();
+    }
+
     return next.handle().pipe(
       map((content: object) => ({
         success: true,
         statusCode: 200,
         content,
-        message: content['message'] || null,
+        message: 'Successfully!',
         timestamp: new Date().toISOString(),
       })),
     );

@@ -1,46 +1,76 @@
 import {
   Body,
-  ConflictException,
   Controller,
   Delete,
-  NotFoundException,
+  Get,
   Param,
+  Patch,
   Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import type { Request } from 'express';
-import { checkParamIsNumber } from 'src/global/global.check.number.param';
-import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
-import { GuardJwtAuth, GuardShouldBeOwnerOfReq } from 'src/guards/guard.jwt';
 import { Project } from 'src/models';
-import { ServiceProject } from 'src/services/service.project';
+import type { Request } from 'express';
 import { InterfaceUserId } from 'src/structures';
-import { DtoProjectCreate } from 'src/structures/dto/dto.project';
+import { ServiceProject } from 'src/services/service.project';
+import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
 import { InterfaceProjectId } from 'src/structures/types/type.project';
+import { checkParamIsNumber } from 'src/global/global.check.number.param';
+import { GuardJwtAuth, GuardShouldBeOwnerOfReq } from 'src/guards/guard.jwt';
+import {
+  DtoProjectCreate,
+  DtoProjectUpdate,
+} from 'src/structures/dto/dto.project';
 
 @Controller('project')
 export class ControllerProject {
+  // @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
+  // @Get('/')
+  // async get() {}
+
+  @UseGuards(GuardJwtAuth)
+  @Get('/:id')
+  async getDetail(@Req() _req: Request, @Param('id') param: any) {
+    const projectIdRaw = checkParamIsNumber(param);
+    const projectId: InterfaceProjectId = { _id: projectIdRaw };
+
+    const projects: Project | null = await this.service.getDetail(projectId);
+
+    return projects?.dataValues ?? projects;
+  }
+
   @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
   @Post('/')
   async create(@Body() body: DtoProjectCreate, @Req() req: Request) {
     const ownerIdRaw = retrieveOwnerId(req);
     const ownerId: InterfaceUserId = { _id: ownerIdRaw };
 
-    const project: Project | null = await this.service.findByUserId(ownerId);
-    if (project) {
-      throw new ConflictException(
-        'A user can have just one project at the same time.',
-      );
-    }
+    await this.service.findByUserId(ownerId);
+    const createdProject = await this.service.create(body, ownerId);
 
-    let createdProject = await this.service.create(body, ownerId);
-    let projectResult = !createdProject ? null : createdProject.dataValues;
+    return createdProject?.dataValues ?? createdProject;
+  }
 
-    return {
-      ...projectResult,
-      message: 'Successfully',
-    };
+  @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
+  @Patch('/:id')
+  async update(
+    @Param('id') param: any,
+    @Req() req: Request,
+    @Body() body: DtoProjectUpdate,
+  ) {
+    const projectIdRaw = checkParamIsNumber(param);
+    const projectId: InterfaceProjectId = { _id: projectIdRaw };
+
+    const ownerIdRaw = retrieveOwnerId(req);
+    const ownerId: InterfaceUserId = { _id: ownerIdRaw };
+
+    const updatedProject: Project = await this.service.update(
+      body,
+      ownerId,
+      projectId,
+    );
+
+    return updatedProject.dataValues ?? updatedProject;
   }
 
   @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
@@ -52,16 +82,7 @@ export class ControllerProject {
     const ownerIdRaw = retrieveOwnerId(req);
     const ownerId: InterfaceUserId = { _id: ownerIdRaw };
 
-    const project: Project | null = await this.service.findByUserId(ownerId);
-    if (!project) {
-      throw new NotFoundException('Project Not found');
-    }
-
-    await this.service.deleteWithOwnTasks(projectId);
-
-    return {
-      message: 'Project deleted with id: ' + projectId,
-    };
+    return await this.service.delete(ownerId, projectId);
   }
 
   constructor(private readonly service: ServiceProject) {}

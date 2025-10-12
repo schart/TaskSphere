@@ -1,10 +1,10 @@
 import { User } from 'src/models';
-import { ConfigService } from '@nestjs/config';
 import { Strategy } from 'passport-google-oauth20';
-import { InterfaceUserAttributes, InterfaceUserEmail } from 'src/structures';
+import { InterfaceUserEmail } from 'src/structures';
 import { AuthGuard, PassportStrategy } from '@nestjs/passport';
 import { RepositoryUser } from 'src/repository/repository.user';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class StrategyGoogleOauth extends PassportStrategy(Strategy, 'google') {
@@ -17,25 +17,15 @@ export class StrategyGoogleOauth extends PassportStrategy(Strategy, 'google') {
     let email: InterfaceUserEmail = { email: profile.emails[0].value };
     let username: string = profile.name.givenName;
 
-    const user = await this.repository.findByEmail(email);
-
-    if (user) {
-      return done(null, { user, isNewUser: false });
-    } else {
-      const user: User = await this.repository.create({
+    let user = await this.repository.findByEmail(email);
+    if (!user) {
+      user = await this.repository.create({
         username: username,
         email: email.email,
       });
-
-      if (!user) {
-        throw new UnauthorizedException('Error occurs in registration');
-      }
-
-      return done(null, {
-        user,
-        isNewUser: true,
-      });
+      if (!user) throw new UnauthorizedException('User creation failed');
     }
+    return done(null, { user });
   }
 
   constructor(

@@ -4,14 +4,15 @@ import {
   Table,
   ForeignKey,
   BelongsTo,
+  DataType,
 } from 'sequelize-typescript';
 import { User } from './model.users';
 import { Project } from './model.projects';
 
-@Table
+@Table({ tableName: 'project-worker' })
 export class ProjectWorker extends Model<ProjectWorker> {
-  @Column({ primaryKey: true, autoIncrement: true })
-  _id: number;
+  // @Column({ type: DataType.STRING, primaryKey: true, autoIncrement: true })
+  // _id: string;
 
   @ForeignKey(() => User)
   @Column({ allowNull: false })
