@@ -144,7 +144,7 @@ export class RepositoryProject extends Repository<Project> {
           required: false,
         },
       ],
-      attributes: ['title', 'description', 'createdAt'],
+      attributes: ['id', 'title', 'description', 'createdAt'],
     });
   }
 
