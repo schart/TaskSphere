@@ -22,10 +22,6 @@ import { InterfaceUserId } from 'src/structures';
 
 @Controller('project')
 export class ControllerProject {
-  // @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
-  // @Get('/')
-  // async get() {}
-
   @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
   @Get('/:id')
   async getDetail(
