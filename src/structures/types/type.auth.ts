@@ -7,8 +7,10 @@ export interface InterfaceCredentials {
 }
 
 export interface InterfaceJwtPayload {
+  id: string;
   username: string;
   email: string;
+  projectId?: string;
 }
 
 export type InterfaceRevokedTokenModel = typeof RevokedToken & {

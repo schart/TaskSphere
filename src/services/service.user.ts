@@ -5,11 +5,7 @@ import {
 } from '@nestjs/common';
 import { User } from 'src/models';
 import { RepositoryUser } from 'src/repository';
-import {
-  InterfaceUserEmail,
-  InterfaceUserId,
-  InterfaceUserUpdate,
-} from 'src/structures';
+import { InterfaceUserId, InterfaceUserUpdate } from 'src/structures';
 
 @Injectable()
 export class UserService {

@@ -1,4 +1,4 @@
-import { Project } from 'src/models';
+import { Project, User } from 'src/models';
 import {
   ConflictException,
   Injectable,
@@ -143,5 +143,14 @@ export class ServiceProject {
       );
 
     return project.get({ plain: true });
+  }
+
+  async getProjectByUserId(userId: InterfaceUserId): Promise<Project | null> {
+    const existing: Project | null = await this.repository.findByUserId(userId);
+    if (!existing) {
+      return null;
+    }
+
+    return existing;
   }
 }
