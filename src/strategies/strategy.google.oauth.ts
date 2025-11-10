@@ -40,4 +40,3 @@ export class StrategyGoogleOauth extends PassportStrategy(Strategy, 'google') {
     });
   }
 }
-export class GuardGoogleOauth extends AuthGuard('google') {}

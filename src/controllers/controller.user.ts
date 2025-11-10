@@ -6,21 +6,18 @@ import {
   Param,
   UseGuards,
   Controller,
-  UnauthorizedException,
   ParseIntPipe,
 } from '@nestjs/common';
 import { User } from 'src/models';
 import type { Request } from 'express';
 import { UserService } from 'src/services/service.user';
-import { compareIds } from 'src/global/global.compare.ids';
-import { UpdateUserDto, InterfaceUserId } from 'src/structures';
-import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
-import { checkParamIsNumber } from 'src/global/global.check.number.param';
-import { GuardJwtAuth, GuardShouldBeOwnerOfReq } from 'src/guards/guard.jwt';
+import { UpdateUserDto } from 'src/structures';
+import { retrieveOwnerId } from 'src/global/global.parse.ownerId';
+import { GuardJwtAuth, GuardGetSessionUserID } from 'src/guards/guard.jwt';
 
 @Controller('user')
 export class ControllerUser {
-  @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
+  @UseGuards(GuardJwtAuth, GuardGetSessionUserID)
   @Get('/:id')
   async getDetail(
     @Req() req: Request,
@@ -35,7 +32,7 @@ export class ControllerUser {
     );
   }
 
-  @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
+  @UseGuards(GuardJwtAuth, GuardGetSessionUserID)
   @Patch('/:id')
   async update(
     @Req() req: Request,

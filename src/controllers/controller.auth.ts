@@ -1,5 +1,4 @@
 import type { Request, Response } from 'express';
-import { GuardGoogleOauth } from 'src/strategies';
 import { GuardJwtAuth } from 'src/guards/guard.jwt';
 import { ServiceAuth } from 'src/services/service.auth';
 import { UserService } from 'src/services/service.user';
@@ -11,7 +10,11 @@ import {
   Res,
   UnauthorizedException,
 } from '@nestjs/common';
-import { extractToken } from 'src/global/global.extract.token';
+import { GuardGoogleOauth } from 'src/guards/guard.google';
+import { ServiceProject } from 'src/services/service.project';
+import { Project } from 'src/models';
+import { JwtPayload } from 'jsonwebtoken';
+import { InterfaceJwtPayload } from 'src/structures';
 
 @Controller('auth/google')
 export class ControllerAuth {
@@ -26,12 +29,29 @@ export class ControllerAuth {
       if (!req['user']) {
         throw new UnauthorizedException('User not found');
       }
+      let payload: InterfaceJwtPayload;
 
       const user = req['user'];
-      const { access_token } = await this.serviceAuth.generateToken({
-        email: user['user'].dataValues.email,
-        username: user['user'].dataValues.username,
+      const project = await this.serviceProject.getProjectByUserId({
+        _id: user['user'].dataValues.id,
       });
+
+      if (project) {
+        payload = {
+          id: user['user'].dataValues.id,
+          email: user['user'].dataValues.email,
+          username: user['user'].dataValues.username,
+          projectId: project?.dataValues.id,
+        };
+      } else {
+        payload = {
+          id: user['user'].dataValues.id,
+          email: user['user'].dataValues.email,
+          username: user['user'].dataValues.username,
+        };
+      }
+
+      const { access_token } = await this.serviceAuth.generateToken(payload);
 
       res.cookie('access_token', access_token, {
         // httpOnly: true,
@@ -77,6 +97,6 @@ export class ControllerAuth {
 
   constructor(
     private readonly serviceAuth: ServiceAuth,
-    private readonly serviceUser: UserService,
+    private readonly serviceProject: ServiceProject,
   ) {}
 }

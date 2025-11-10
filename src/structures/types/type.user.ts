@@ -1,8 +1,10 @@
 import { Optional } from 'sequelize';
 import { User } from 'src/models';
 
+export type TypeuserId = number;
+
 export interface InterfaceUserAttributes {
-  _id: number;
+  _id: TypeuserId;
   username: string;
   email: string;
   roleId?: number;

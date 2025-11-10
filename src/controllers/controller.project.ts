@@ -3,26 +3,31 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
 import { ServiceProject } from 'src/services/service.project';
-import { retrieveOwnerId } from 'src/global/global.retrieve.owner.id';
-import { GuardJwtAuth, GuardShouldBeOwnerOfReq } from 'src/guards/guard.jwt';
+import { retrieveOwnerId } from 'src/global/global.parse.ownerId';
+import { GuardJwtAuth, GuardGetSessionUserID } from 'src/guards/guard.jwt';
 import {
   DtoProjectCreate,
   DtoProjectUpdate,
 } from 'src/structures/dto/dto.project';
 import { InterfaceUserId } from 'src/structures';
+import { ServiceAuth } from 'src/services';
 
 @Controller('project')
 export class ControllerProject {
-  @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
+  private readonly logger: Logger = new Logger();
+
+  @UseGuards(GuardJwtAuth, GuardGetSessionUserID)
   @Get('/:id')
   async getDetail(
     @Req() req: Request,
@@ -32,14 +37,42 @@ export class ControllerProject {
     return await this.service.getProjectById({ _id: projectId }, userId);
   }
 
-  @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
+  @UseGuards(GuardJwtAuth, GuardGetSessionUserID)
   @Post('/')
-  async create(@Body() body: DtoProjectCreate, @Req() req: Request) {
+  async create(
+    @Body() body: DtoProjectCreate,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const user: any = req.user;
     const ownerId = retrieveOwnerId(req);
-    return await this.service.create(body, ownerId);
+    const response = await this.service.create(body, ownerId);
+
+    const { access_token, refresh_token } =
+      await this.authService.generateToken({
+        id: user['id'],
+        email: user['email'],
+        username: user['username'],
+        projectId: response.id,
+      });
+
+    res.clearCookie('access_token', {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: false,
+    });
+
+    res.cookie('access_token', access_token, {
+      // httpOnly: true,
+      // secure: false, // while production: true
+      // sameSite: 'none', // For will be able sen others sites
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    return response;
   }
 
-  @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
+  @UseGuards(GuardJwtAuth, GuardGetSessionUserID)
   @Patch('/:id')
   async update(
     @Param('id', ParseIntPipe) projectId: number,
@@ -50,7 +83,7 @@ export class ControllerProject {
     return await this.service.update(body, ownerId, { _id: projectId });
   }
 
-  @UseGuards(GuardJwtAuth, GuardShouldBeOwnerOfReq)
+  @UseGuards(GuardJwtAuth, GuardGetSessionUserID)
   @Delete('/:id')
   async delete(
     @Param('id', ParseIntPipe) projectId: number,
@@ -60,5 +93,8 @@ export class ControllerProject {
     return await this.service.delete(ownerId, { _id: projectId });
   }
 
-  constructor(private readonly service: ServiceProject) {}
+  constructor(
+    private readonly service: ServiceProject,
+    private readonly authService: ServiceAuth,
+  ) {}
 }

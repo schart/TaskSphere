@@ -22,10 +22,32 @@ import { RepositoryAuth, RepositoryUser } from './repository';
 import { ControllerUser } from './controllers/controller.user';
 import { RepositoryProject } from './repository/repository.project';
 import { ControllerProject } from './controllers/controller.project';
-import { GuardGoogleOauth, StrategyGoogleOauth } from './strategies';
+import { StrategyGoogleOauth } from './strategies';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { GuardGoogleOauth } from './guards/guard.google';
+import { ControllerMailer } from './controllers/controller.mailer';
+import { MailService } from './services/service.mailer';
+import { InvitationService } from './services/service.invitation';
 
 @Module({
   imports: [
+    MailerModule.forRootAsync({
+      useFactory: () => ({
+        transport: {
+          host: '',
+          port: 1111,
+          secure: false, // In production: true
+
+          tls: {
+            rejectUnauthorized: false,
+          },
+        },
+        defaults: {
+          from: 'innalcuzdan1@gmail.com',
+        },
+      }),
+    }),
+
     SequelizeModule.forRoot({
       dialect: 'postgres',
       host: '127.0.0.1',
@@ -74,13 +96,21 @@ import { GuardGoogleOauth, StrategyGoogleOauth } from './strategies';
     StrategyJwt,
     ServiceAuth,
     UserService,
+    MailService,
     RepositoryAuth,
     ServiceProject,
     RepositoryUser,
     GuardGoogleOauth,
     RepositoryProject,
     StrategyGoogleOauth,
+    InvitationService,
   ],
-  controllers: [ControllerAuth, ControllerUser, ControllerProject],
+
+  controllers: [
+    ControllerAuth,
+    ControllerUser,
+    ControllerProject,
+    ControllerMailer,
+  ],
 })
 export class AppModule {}
