@@ -1,5 +1,4 @@
 import type { Request, Response } from 'express';
-import { GuardGoogleOauth } from 'src/strategies';
 import { GuardJwtAuth } from 'src/guards/guard.jwt';
 import { ServiceAuth } from 'src/services/service.auth';
 import { UserService } from 'src/services/service.user';
@@ -11,7 +10,7 @@ import {
   Res,
   UnauthorizedException,
 } from '@nestjs/common';
-import { extractToken } from 'src/global/global.extract.token';
+import { GuardGoogleOauth } from 'src/guards/guard.google';
 
 @Controller('auth/google')
 export class ControllerAuth {
@@ -29,6 +28,7 @@ export class ControllerAuth {
 
       const user = req['user'];
       const { access_token } = await this.serviceAuth.generateToken({
+        id: user['user'].dataValues.id,
         email: user['user'].dataValues.email,
         username: user['user'].dataValues.username,
       });
@@ -77,6 +77,6 @@ export class ControllerAuth {
 
   constructor(
     private readonly serviceAuth: ServiceAuth,
-    private readonly serviceUser: UserService,
+    // private readonly serviceUser: UserService,
   ) {}
 }
