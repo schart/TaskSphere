@@ -28,22 +28,22 @@ import { GuardGoogleOauth } from './guards/guard.google';
 import { ControllerMailer } from './controllers/controller.mailer';
 import { MailService } from './services/service.mailer';
 import { InvitationService } from './services/service.invitation';
-
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter'; // Optional for templates
 @Module({
   imports: [
     MailerModule.forRootAsync({
       useFactory: () => ({
         transport: {
-          host: '',
-          port: 1111,
-          secure: false, // In production: true
-
-          tls: {
-            rejectUnauthorized: false,
+          host: process.env.SMTP_HOST,
+          port: 587,
+          secure: false, // true for 465, false for other ports
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
           },
         },
         defaults: {
-          from: 'innalcuzdan1@gmail.com',
+          from: process.env.SENDER_EMAIL,
         },
       }),
     }),
