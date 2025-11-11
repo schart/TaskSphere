@@ -145,12 +145,16 @@ export class ServiceProject {
     return project.get({ plain: true });
   }
 
-  async getProjectByUserId(userId: InterfaceUserId): Promise<Project | null> {
-    const existing: Project | null = await this.repository.findByUserId(userId);
-    if (!existing) {
-      return null;
+  async getProjectByUserId(userId: InterfaceUserId): Promise<Project> {
+    const project = await this.repository.findByUserId(userId);
+    if (!project) {
+      throw new NotFoundException('Project Not Found');
     }
+    return project;
+  }
 
-    return existing;
+  // Optional: use when "proceed even if missing"
+  async findProjectByUserId(userId: InterfaceUserId): Promise<Project | null> {
+    return this.repository.findByUserId(userId);
   }
 }

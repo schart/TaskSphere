@@ -5,7 +5,11 @@ import {
 } from '@nestjs/common';
 import { User } from 'src/models';
 import { RepositoryUser } from 'src/repository';
-import { InterfaceUserId, InterfaceUserUpdate } from 'src/structures';
+import {
+  InterfaceUserId,
+  InterfaceUserUpdate,
+  UserEmailDto,
+} from 'src/structures';
 
 @Injectable()
 export class UserService {
@@ -14,6 +18,15 @@ export class UserService {
     _id: InterfaceUserId,
   ): Promise<User | null> {
     return await this.repository.update(body, _id);
+  }
+
+  async getUserByEmail(email: UserEmailDto): Promise<User> {
+    const user = await this.repository.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException('User Not Found');
+    }
+
+    return user.get({ plain: true });
   }
 
   async getUserById(

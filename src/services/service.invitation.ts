@@ -7,7 +7,10 @@ export class InvitationService {
 
   private logger: Logger = new Logger();
 
-  generateInviteLinkByJwt(projectId: string, developerId: string): string {
+  generateInviteLinkByJwt(
+    projectId: string | number,
+    developerId: string,
+  ): string {
     let inviteToken = this.jwtService.sign(
       {
         projectId: projectId,

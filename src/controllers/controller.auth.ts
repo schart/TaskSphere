@@ -32,7 +32,7 @@ export class ControllerAuth {
       let payload: InterfaceJwtPayload;
 
       const user = req['user'];
-      const project = await this.serviceProject.getProjectByUserId({
+      const project = await this.serviceProject.findProjectByUserId({
         _id: user['user'].dataValues.id,
       });
 
